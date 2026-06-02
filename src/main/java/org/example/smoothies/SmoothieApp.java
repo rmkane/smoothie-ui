@@ -3,7 +3,7 @@ package org.example.smoothies;
 import lombok.extern.slf4j.Slf4j;
 import org.example.smoothies.config.SmoothieProperties;
 import org.example.smoothies.model.Smoothie;
-import org.example.smoothies.service.SmoothieRepository;
+import org.example.smoothies.repository.SmoothieRepository;
 import org.example.smoothies.service.SmoothieService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

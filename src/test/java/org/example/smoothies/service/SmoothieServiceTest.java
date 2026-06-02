@@ -3,6 +3,7 @@ package org.example.smoothies.service;
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
+import org.example.smoothies.service.impl.SmoothieServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class SmoothieServiceTest {
 
     @BeforeEach
     void setUp() {
-        smoothieService = new SmoothieService();
+        smoothieService = new SmoothieServiceImpl();
         SmoothiesWrapper wrapper = new YamlLoader().load("data/smoothies.yml", SmoothiesWrapper.class);
         smoothies = wrapper.smoothies();
     }

@@ -1,21 +1,23 @@
-package org.example.smoothies.service;
+package org.example.smoothies.repository.impl;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.example.smoothies.config.SmoothieProperties;
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
+import org.example.smoothies.repository.SmoothieRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class SmoothieRepository {
+public class SmoothieRepositoryImpl implements SmoothieRepository {
 
     private final List<Smoothie> smoothies;
 
-    public SmoothieRepository(YamlLoader yamlLoader, SmoothieProperties properties) {
+    public SmoothieRepositoryImpl(YamlLoader yamlLoader, SmoothieProperties properties) {
         String dataFile = properties.dataFile();
         log.debug("Loading smoothies from classpath resource: {}", dataFile);
         SmoothiesWrapper wrapper = yamlLoader.load(dataFile, SmoothiesWrapper.class);
@@ -23,6 +25,7 @@ public class SmoothieRepository {
         log.info("Loaded {} smoothie recipes from {}", smoothies.size(), dataFile);
     }
 
+    @Override
     public List<Smoothie> getSmoothies() {
         return smoothies;
     }
