@@ -1,11 +1,13 @@
 package org.example.smoothies;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.smoothies.config.SmoothieProperties;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.service.SmoothieRepository;
 import org.example.smoothies.service.SmoothieService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.awt.BorderLayout;
@@ -28,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 @Slf4j
 @SpringBootApplication
+@EnableConfigurationProperties(SmoothieProperties.class)
 public class SmoothieApp extends JFrame {
 
     private static final String[] INGREDIENTS_LIST = {
