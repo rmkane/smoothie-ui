@@ -17,12 +17,22 @@ public class YamlLoader {
         Yaml yaml = new Yaml(new Constructor(clazz, new LoaderOptions()));
         try (InputStream inputStream = classLoader.getResourceAsStream(resourcePath)) {
             if (inputStream == null) {
-                throw new RuntimeException(resourcePath + " not found");
+                throw new IllegalStateException("Classpath resource not found: " + resourcePath);
             }
-            return yaml.load(inputStream);
+            E result;
+            try {
+                result = yaml.load(inputStream);
+            } catch (RuntimeException e) {
+                log.error("Failed to parse YAML: {}", resourcePath, e);
+                throw new IllegalStateException("Failed to parse YAML: " + resourcePath, e);
+            }
+            if (result == null) {
+                throw new IllegalStateException("YAML was empty: " + resourcePath);
+            }
+            return result;
         } catch (IOException e) {
-            log.error("Could not load: {}", resourcePath);
-            throw new RuntimeException(e);
+            log.error("Failed to read YAML: {}", resourcePath, e);
+            throw new IllegalStateException("Failed to read YAML: " + resourcePath, e);
         }
     }
 }
