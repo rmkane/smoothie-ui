@@ -1,7 +1,6 @@
 package org.example.smoothies.repository.impl;
 
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.example.smoothies.config.SmoothieProperties;
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
@@ -9,7 +8,7 @@ import org.example.smoothies.model.SmoothiesWrapper;
 import org.example.smoothies.repository.SmoothieRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Service

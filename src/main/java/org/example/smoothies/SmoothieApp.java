@@ -10,25 +10,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -58,9 +43,9 @@ public class SmoothieApp extends JFrame {
     private final JLabel selectedIngredientsLabel = new JLabel("Selected: (none)");
 
     public SmoothieApp(
-            SmoothieService smoothieService,
-            SmoothieRepository repository,
-            ConfigurableApplicationContext applicationContext) {
+        SmoothieService smoothieService,
+        SmoothieRepository repository,
+        ConfigurableApplicationContext applicationContext) {
         this.smoothieService = smoothieService;
         this.smoothies = repository.getSmoothies();
         this.ingredients = smoothieService.getAllIngredients(smoothies);
