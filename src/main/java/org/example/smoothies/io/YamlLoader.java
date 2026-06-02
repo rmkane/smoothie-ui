@@ -31,6 +31,7 @@ public class YamlLoader {
             if (result == null) {
                 throw new IllegalStateException("YAML was empty: " + resourcePath);
             }
+            log.debug("Loaded {} from classpath", resourcePath);
             return result;
         } catch (MismatchedInputException e) {
             if (isEmptyInput(e)) {

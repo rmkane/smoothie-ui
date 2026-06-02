@@ -1,2 +1,13 @@
 smoothies:
   data-file: data/smoothies.yml
+
+logging:
+  file:
+    name: logs/smoothie-maker.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: logs/smoothie-maker-%d{yyyy-MM-dd}.log
+      max-history: 30
+  level:
+    root: INFO
+    org.example.smoothies: DEBUG
