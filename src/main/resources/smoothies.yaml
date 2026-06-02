@@ -1,0 +1,277 @@
+smoothies:
+  - name: Nectar Smoothie
+    ingredients:
+      required: [ "nectar" ]
+      optional: [ "nectar" ]
+  - name: Nectar Milkshake
+    ingredients:
+      required: [ "nectar" ]
+      optional: [ "milk" ]
+  - name: Grape Smoothie
+    ingredients:
+      required: [ "grapes" ]
+      optional: [ "grapes" ]
+  - name: Grape Medley
+    ingredients:
+      required: [ "grapes" ]
+      optional: [ "horse", "apple", "cactus", "salt", "butter", "mango" ]
+  - name: Grape Nectar Blend
+    ingredients:
+      required: [ "grapes" ]
+      optional: [ "nectar" ]
+  - name: Grape Milkshake
+    ingredients:
+      required: [ "grapes" ]
+      optional: [ "milk" ]
+  - name: Double Milkshake
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "milk" ]
+  - name: Milk Cactus Delight
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "apple", "cactus" ]
+  - name: Milk with a Dash of Salt
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "salt" ]
+  - name: Mango Puree
+    ingredients:
+      required: [ "mango" ]
+      optional: [ "mango" ]
+  - name: Mango Adventure
+    ingredients:
+      required: [ "mango" ]
+      optional: [ "kelp", "apple", "cactus", "butter" ]
+  - name: Nectar Mango Fusion
+    ingredients:
+      required: [ "nectar" ]
+      optional: [ "mango" ]
+  - name: Milk Mango Smoothie
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "mango" ]
+  - name: Salted Mango Smoothie
+    ingredients:
+      required: [ "salt" ]
+      optional: [ "mango" ]
+  - name: Cactus Delight
+    ingredients:
+      required: [ "cactus" ]
+      optional: [ "cactus", "horse", "nectar", "pumpkin" ]
+  - name: Cactus and Salt Combo
+    ingredients:
+      required: [ "cactus" ]
+      optional: [ "salt" ]
+  - name: Pepper Explosion
+    ingredients:
+      required: [ "pepper" ]
+      optional: [ "pepper" ]
+  - name: Spicy Cactus Pumpkin Mix
+    ingredients:
+      required: [ "pepper" ]
+      optional: [ "cactus", "pumpkin" ]
+  - name: Pepper Potato Mashup
+    ingredients:
+      required: [ "pepper" ]
+      optional: [ "potato" ]
+  - name: Pepper Grape Smoothie
+    ingredients:
+      required: [ "pepper" ]
+      optional: [ "grapes", "apple", "milk", "mango" ]
+  - name: Apple Smoothie
+    ingredients:
+      required: [ "apple" ]
+      optional: [ "apple" ]
+  - name: Apple Adventure
+    ingredients:
+      required: [ "apple" ]
+      optional: [ "horse", "nectar", "cactus", "potato" ]
+  - name: Salted Apple Mix
+    ingredients:
+      required: [ "apple" ]
+      optional: [ "salt" ]
+  - name: Kelp Smoothie
+    ingredients:
+      required: [ "kelp" ]
+      optional: [ "kelp" ]
+  - name: Kelp Fruit Blend
+    ingredients:
+      required: [ "kelp" ]
+      optional: [ "grapes", "apple", "potato" ]
+  - name: Pumpkin with a Hint of Kelp
+    ingredients:
+      required: [ "kelp" ]
+      optional: [ "pumpkin" ]
+  - name: Kelp Milkshake
+    ingredients:
+      required: [ "kelp" ]
+      optional: [ "milk" ]
+  - name: Salted Kelp Smoothie
+    ingredients:
+      required: [ "kelp" ]
+      optional: [ "salt" ]
+  - name: Horsepower Smoothie
+    ingredients:
+      required: [ "horse" ]
+      optional: [ "horse", "kelp", "pepper", "nectar", "potato", "salt", "mango" ]
+  - name: Horse Milkshake
+    ingredients:
+      required: [ "horse" ]
+      optional: [ "milk" ]
+  - name: Potato Smoothie
+    ingredients:
+      required: [ "potato" ]
+      optional: [ "potato" ]
+  - name: Potato Grape Mashup
+    ingredients:
+      required: [ "potato" ]
+      optional: [ "grapes", "cactus", "butter" ]
+  - name: Potato Nectar Blend
+    ingredients:
+      required: [ "nectar" ]
+      optional: [ "potato" ]
+  - name: Milk Potato Mix
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "potato" ]
+  - name: Mango Potato Fusion
+    ingredients:
+      required: [ "potato" ]
+      optional: [ "mango" ]
+  - name: Salted Potato
+    ingredients:
+      required: [ "potato" ]
+      optional: [ "salt" ]
+  - name: Butter Smoothie
+    ingredients:
+      required: [ "butter" ]
+      optional: [ "butter", "kelp" ]
+  - name: Apple Butter Delight
+    ingredients:
+      required: [ "apple" ]
+      optional: [ "butter" ]
+  - name: Cactus Butter Smoothie
+    ingredients:
+      required: [ "cactus" ]
+      optional: [ "butter" ]
+  - name: Butter Nectar Mix
+    ingredients:
+      required: [ "nectar" ]
+      optional: [ "butter" ]
+  - name: Butter Pumpkin Smoothie
+    ingredients:
+      required: [ "butter" ]
+      optional: [ "pumpkin" ]
+  - name: Milk Butter Combo
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "butter" ]
+  - name: Salted Butter Mix
+    ingredients:
+      required: [ "salt" ]
+      optional: [ "butter" ]
+  - name: Pumpkin Delight
+    ingredients:
+      required: [ "pumpkin" ]
+      optional: [ "pumpkin" ]
+  - name: Pumpkin Harvest
+    ingredients:
+      required: [ "pumpkin" ]
+      optional: [ "horse", "grapes", "apple", "potato" ]
+  - name: Pumpkin Nectar Smoothie
+    ingredients:
+      required: [ "nectar" ]
+      optional: [ "pumpkin" ]
+  - name: Milk Pumpkin Fusion
+    ingredients:
+      required: [ "milk" ]
+      optional: [ "pumpkin" ]
+  - name: Pumpkin Mango Smoothie
+    ingredients:
+      required: [ "pumpkin" ]
+      optional: [ "mango" ]
+  - name: Salted Pumpkin Blend
+    ingredients:
+      required: [ "salt" ]
+      optional: [ "pumpkin" ]
+  - name: Egg Smoothie
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "egg", "grapes", "nectar", "milk", "salt" ]
+  - name: Mango Egg Mix
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "mango" ]
+  - name: Egg and Cactus Combo
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "cactus" ]
+  - name: Spicy Egg
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "pepper" ]
+  - name: Apple Egg Delight
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "apple" ]
+  - name: Egg and Kelp Mix
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "kelp" ]
+  - name: Horse Egg Smoothie
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "horse" ]
+  - name: Potato Egg Combo
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "potato" ]
+  - name: Buttered Egg Delight
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "butter" ]
+  - name: Pumpkin Egg Fusion
+    ingredients:
+      required: [ "egg" ]
+      optional: [ "pumpkin" ]
+  - name: Gutsy Mango Mix
+    ingredients:
+      required: [ "guts" ]
+      optional: [ "mango" ]
+  - name: Guts and Cactus Combo
+    ingredients:
+      required: [ "guts" ]
+      optional: [ "cactus" ]
+  - name: Fang Pepper Mashup
+    ingredients:
+      required: [ "fang" ]
+      optional: [ "pepper" ]
+  - name: Gutsy Pepper Smoothie
+    ingredients:
+      required: [ "guts" ]
+      optional: [ "pepper" ]
+  - name: Apple Guts Smoothie
+    ingredients:
+      required: [ "guts" ]
+      optional: [ "apple" ]
+  - name: Fang Kelp Mix
+    ingredients:
+      required: [ "fang" ]
+      optional: [ "kelp" ]
+  - name: Horse Fang Smoothie
+    ingredients:
+      required: [ "fang" ]
+      optional: [ "horse" ]
+  - name: Potato Fang Delight
+    ingredients:
+      required: [ "fang" ]
+      optional: [ "potato" ]
+  - name: Butter Fang Fusion
+    ingredients:
+      required: [ "fang" ]
+      optional: [ "butter" ]
+  - name: Pumpkin Fang Combo
+    ingredients:
+      required: [ "fang" ]
+      optional: [ "pumpkin" ]
