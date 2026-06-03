@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import lombok.experimental.UtilityClass;
@@ -15,7 +17,18 @@ import lombok.experimental.UtilityClass;
 public class AppIcons {
 
 	private static final int[] SIZES = {16, 32, 48, 64, 128, 256};
+	private static final int[] DIALOG_ICON_SIZES = {128, 256, 64, 48, 32, 16};
 	private static final String ICON_PATH_FORMAT = "/icons/icon-%d.png";
+
+	public static Icon dialogIcon() {
+		for (int size : DIALOG_ICON_SIZES) {
+			URL url = AppIcons.class.getResource(String.format(ICON_PATH_FORMAT, size));
+			if (url != null) {
+				return new ImageIcon(url);
+			}
+		}
+		return null;
+	}
 
 	public static void applyTo(JFrame frame) {
 		List<Image> images = loadIconImages();

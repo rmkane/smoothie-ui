@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
 import org.example.smoothies.ui.component.ActionsPanel;
+import org.example.smoothies.ui.component.AppMenuBar;
 import org.example.smoothies.ui.component.IngredientPanel;
 import org.example.smoothies.ui.component.ResultsPanel;
 import org.example.smoothies.ui.state.AppState;
@@ -21,18 +22,18 @@ import org.example.smoothies.ui.state.AppState;
 @Component
 public class SmoothieFrame extends JFrame {
 
-	private static final String WINDOW_TITLE = "Smoothie Maker";
 	private static final int WINDOW_WIDTH = 780;
 	private static final int WINDOW_HEIGHT = 520;
 	private final ConfigurableApplicationContext applicationContext;
 
 	public SmoothieFrame(AppStore store, IngredientPanel ingredientPanel, ResultsPanel resultsPanel,
-			ActionsPanel actionsPanel, ConfigurableApplicationContext applicationContext) {
+			ActionsPanel actionsPanel, AppMenuBar appMenuBar, ConfigurableApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 
 		AppIcons.applyTo(this);
+		appMenuBar.install(this);
 
-		setTitle(WINDOW_TITLE);
+		setTitle(AppInfo.NAME);
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLayout(new BorderLayout(12, 12));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
