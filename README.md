@@ -29,6 +29,7 @@ This project uses a small **unidirectional, state-driven UI** pattern: UI compon
 
 - Java 21+
 - Maven 3.9+
+- [ImageMagick](https://imagemagick.org/) (`magick`) — only if you regenerate icons
 
 ## Quick start
 
@@ -38,6 +39,8 @@ make dev     # Spring Boot (development)
 make prod    # fat JAR (production-like)
 make test    # unit tests
 ```
+
+**App icon:** Window and dock icons load from `src/main/resources/icons/`. Source artwork lives in `assets/logo.png`. After changing the logo, run `make icons` (see [assets/README.md](assets/README.md)).
 
 Override the recipe file:
 
@@ -168,13 +171,22 @@ src/main/java/org/example/smoothies/
     ├── message/AppMessage.java
     ├── state/AppState.java
     └── component/                # Swing panels
+    AppIcons.java                 # Loads /icons/*.png for the frame
 
 src/main/resources/
+    icons/                        # Generated PNGs (make icons)
 ├── application.yml
 ├── logback-spring.xml
 └── data/smoothies.yml
 
 src/test/java/                    # AppStore, service, YamlLoader tests
+
+assets/
+    logo.png, logo.svg            # Source artwork (not loaded at runtime)
+    icons/                        # app.ico, app.icns for native packaging
+
+scripts/
+    generate_icons.py             # ImageMagick icon generator
 ```
 
 ## Configuration

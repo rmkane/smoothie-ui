@@ -1,14 +1,17 @@
 # Smoothie Maker — use `make` or `make help` for targets
 
 MVN          := mvn
-ARTIFACT     := smoothies
-VERSION      := 1.0-SNAPSHOT
+ARTIFACT     := $(shell $(MVN) help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+VERSION      := $(shell $(MVN) help:evaluate -Dexpression=project.version -q -DforceStdout)
 JAR          := target/$(ARTIFACT)-$(VERSION).jar
 MAIN_CLASS   := org.example.smoothies.SmoothieApp
 DEBUG_PORT   ?= 8787
 JVM_DEBUG    := -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$(DEBUG_PORT)
 
-.PHONY: help develop verify build workspace \
+# JDK 24+: silence sun.misc.Unsafe warnings from Spotless on newer local JDKs
+export MAVEN_OPTS ?= --sun-misc-unsafe-memory-access=allow
+
+.PHONY: help develop verify build workspace icons \
         dev debug run jar prod \
         test compile format lint verify install \
         package build clean jar-path
@@ -18,6 +21,10 @@ JVM_DEBUG    := -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:
 # --- Workspace ----------------------------------------------------------------
 
 ##@ Workspace
+## icons: Generate app icons from assets/logo.png (ImageMagick)
+icons:
+	python3 scripts/generate_icons.py
+
 ## help: List targets
 help:
 	@printf '%s\n' 'Smoothie Maker'

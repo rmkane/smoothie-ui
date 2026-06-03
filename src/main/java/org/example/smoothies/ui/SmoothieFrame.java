@@ -31,6 +31,7 @@ public class SmoothieFrame extends JFrame {
 		this.applicationContext = applicationContext;
 
 		setTitle("Smoothie Maker");
+		AppIcons.applyTo(this);
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLayout(new BorderLayout(12, 12));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
