@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test classpath: quieter console when tests expect parse/load failures -->
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- %nopex: message only, no stack trace -->
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%nopex%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Expected failures in YamlLoaderTest log at ERROR; silence that logger in tests -->
+    <logger name="org.example.smoothies.io.YamlLoader" level="OFF"/>
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

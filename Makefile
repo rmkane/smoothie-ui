@@ -1,40 +1,64 @@
-.PHONY: help dev prod build package test clean compile verify install
+# Smoothie Maker — use `make` or `make help` for targets
 
-MVN       := mvn
-ARTIFACT  := smoothies
-VERSION   := 1.0-SNAPSHOT
-JAR       := target/$(ARTIFACT)-$(VERSION).jar
-MAIN_CLASS := org.example.smoothies.SmoothieApp
+MVN          := mvn
+ARTIFACT     := smoothies
+VERSION      := 1.0-SNAPSHOT
+JAR          := target/$(ARTIFACT)-$(VERSION).jar
+MAIN_CLASS   := org.example.smoothies.SmoothieApp
+DEBUG_PORT   ?= 8787
+JVM_DEBUG    := -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$(DEBUG_PORT)
+
+.PHONY: help develop verify build workspace \
+        dev debug run jar prod \
+        test compile format lint verify install \
+        package build clean jar-path
 
 .DEFAULT_GOAL := help
 
-## help: Show this help message
+# --- Workspace ----------------------------------------------------------------
+
+##@ Workspace
+## help: List targets
 help:
-	@echo "Smoothie Maker — available targets:"
-	@echo ""
-	@grep -E '^## ' $(MAKEFILE_LIST) | sed 's/## /  /' | column -t -s ':'
-	@echo ""
-	@echo "Examples:"
-	@echo "  make dev          # run with Spring Boot (hot classpath via devtools if added)"
-	@echo "  make prod         # build fat JAR and run it"
-	@echo "  make test         # run unit tests"
+	@printf '%s\n' 'Smoothie Maker'
+	@awk '/^##@ / { printf "\n%s\n", substr($$0, 5); next } \
+	     /^## [a-z]/ { line=$$0; sub(/^## /,"",line); split(line,a,": "); \
+	       printf "  %-14s %s\n", a[1], a[2] }' $(MAKEFILE_LIST)
+	@printf '\nExamples:\n  make dev     # Spring Boot\n  make jar     # packaged JAR\n  make verify  # tests + package\n'
 
-## dev: Run the app via Spring Boot (development)
+## jar-path: Print path to the packaged JAR
+jar-path:
+	@echo $(JAR)
+
+## clean: Remove build output
+clean:
+	$(MVN) clean
+
+# --- Develop ------------------------------------------------------------------
+
+##@ Develop
+## dev: Run via Spring Boot (dev profile)
 dev:
-	$(MVN) spring-boot:run
+	$(MVN) spring-boot:run -Dspring-boot.run.profiles=dev
 
-## prod: Build the fat JAR and run it (production-like)
-prod: package
+## debug: Run with remote debugging on port $(DEBUG_PORT)
+debug:
+	$(MVN) spring-boot:run -Dspring-boot.run.profiles=dev \
+		-Dspring-boot.run.jvmArguments="$(JVM_DEBUG)"
+
+## run: Alias for dev
+run: dev
+
+## jar: Build and run the fat JAR
+jar: package
 	java -jar $(JAR)
 
-## build: Package the app without running tests
-build:
-	$(MVN) package -DskipTests
+## prod: Alias for jar
+prod: jar
 
-## package: Build the executable Spring Boot JAR
-package:
-	$(MVN) package -DskipTests
+# --- Verify -------------------------------------------------------------------
 
+##@ Verify
 ## test: Run unit tests
 test:
 	$(MVN) test
@@ -43,21 +67,31 @@ test:
 compile:
 	$(MVN) compile test-compile
 
+## format: Apply code formatting (Spotless)
+format:
+	$(MVN) spotless:apply -q
+
+## lint: Check formatting and compile
+lint: format-check compile
+
+.PHONY: format-check
+format-check:
+	$(MVN) spotless:check -q
+
 ## verify: Run tests and package
 verify:
 	$(MVN) verify
 
-## install: Install artifact to local Maven repository
+# --- Build --------------------------------------------------------------------
+
+##@ Build
+## package: Build executable JAR (skip tests)
+package:
+	$(MVN) package -DskipTests
+
+## build: Alias for package
+build: package
+
+## install: Install to local Maven repository
 install:
 	$(MVN) install
-
-## clean: Remove build output
-clean:
-	$(MVN) clean
-
-## run: Alias for dev
-run: dev
-
-## jar-path: Print the path to the packaged JAR
-jar-path:
-	@echo $(JAR)

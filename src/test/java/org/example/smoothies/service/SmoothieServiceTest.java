@@ -1,44 +1,43 @@
 package org.example.smoothies.service;
 
+import java.util.List;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
 import org.example.smoothies.service.impl.SmoothieServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class SmoothieServiceTest {
 
-    private SmoothieService smoothieService;
-    private List<Smoothie> smoothies;
+	private SmoothieService smoothieService;
+	private List<Smoothie> smoothies;
 
-    @BeforeEach
-    void setUp() {
-        smoothieService = new SmoothieServiceImpl();
-        SmoothiesWrapper wrapper = new YamlLoader().load("data/smoothies.yml", SmoothiesWrapper.class);
-        smoothies = wrapper.smoothies();
-    }
+	@BeforeEach
+	void setUp() {
+		smoothieService = new SmoothieServiceImpl();
+		SmoothiesWrapper wrapper = new YamlLoader().load("data/smoothies.yml", SmoothiesWrapper.class);
+		smoothies = wrapper.smoothies();
+	}
 
-    @Test
-    void getAllIngredientsReturnsSortedUniqueNamesFromRecipes() {
-        List<String> ingredients = smoothieService.getAllIngredients(smoothies);
+	@Test
+	void getAllIngredientsReturnsSortedUniqueNamesFromRecipes() {
+		List<String> ingredients = smoothieService.getAllIngredients(smoothies);
 
-        assertThat(ingredients).isNotEmpty().doesNotHaveDuplicates().isSorted();
-        assertThat(ingredients).contains("nectar", "milk", "grapes");
-    }
+		assertThat(ingredients).isNotEmpty().doesNotHaveDuplicates().isSorted();
+		assertThat(ingredients).contains("nectar", "milk", "grapes");
+	}
 
-    @Test
-    void findMakeableReturnsResultsSortedByName() {
-        List<Smoothie> makeable = smoothieService.findMakeable(smoothies, Set.of("nectar", "milk"));
+	@Test
+	void findMakeableReturnsResultsSortedByName() {
+		List<Smoothie> makeable = smoothieService.findMakeable(smoothies, Set.of("nectar", "milk"));
 
-        assertThat(makeable).isNotEmpty();
-        assertThat(makeable)
-            .extracting(Smoothie::name)
-            .isSortedAccordingTo(String.CASE_INSENSITIVE_ORDER);
-    }
+		assertThat(makeable).isNotEmpty();
+		assertThat(makeable).extracting(Smoothie::name).isSortedAccordingTo(String.CASE_INSENSITIVE_ORDER);
+	}
 }

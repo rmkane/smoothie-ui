@@ -1,10 +1,10 @@
 package org.example.smoothies.repository;
 
-import org.example.smoothies.model.Smoothie;
-
 import java.util.List;
+
+import org.example.smoothies.model.Smoothie;
 
 public interface SmoothieRepository {
 
-    List<Smoothie> getSmoothies();
+	List<Smoothie> getSmoothies();
 }
