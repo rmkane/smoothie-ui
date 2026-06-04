@@ -2,6 +2,7 @@ package org.example.smoothies.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -9,7 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JacksonConfig {
 
 	@Bean
+	@Primary
 	ObjectMapper objectMapper() {
-		return JsonMappers.create();
+		return JsonMappers.createJson();
+	}
+
+	@Bean
+	ObjectMapper yamlObjectMapper() {
+		return JsonMappers.createYaml();
 	}
 }

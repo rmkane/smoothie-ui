@@ -21,7 +21,7 @@ class AppPreferencesStoreTest {
 	@Test
 	void returnsDefaultsWhenFileMissing() {
 		AppPreferencesStore store = AppPreferencesStore.forTesting(tempDir.resolve("preferences.json"),
-				JsonMappers.create());
+				JsonMappers.createJson());
 
 		assertThat(store.get()).isEqualTo(AppPreferences.DEFAULTS);
 	}
@@ -29,7 +29,7 @@ class AppPreferencesStoreTest {
 	@Test
 	void savesAndReloadsPreferences() throws Exception {
 		Path preferencesFile = tempDir.resolve("preferences.json");
-		ObjectMapper mapper = JsonMappers.create();
+		ObjectMapper mapper = JsonMappers.createJson();
 		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, mapper);
 
 		store.save(new AppPreferences(UiTheme.DARK, false, List.of("milk"), null, "/tmp", 1.25f));
@@ -50,7 +50,7 @@ class AppPreferencesStoreTest {
 				}
 				""");
 
-		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.create());
+		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.createJson());
 
 		assertThat(store.get().theme()).isEqualTo(UiTheme.LIGHT);
 		assertThat(store.get().restoreLastSelection()).isTrue();
@@ -59,7 +59,7 @@ class AppPreferencesStoreTest {
 	@Test
 	void saveSessionPersistsSelectionAndWindowBounds() {
 		Path preferencesFile = tempDir.resolve("preferences.json");
-		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.create());
+		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.createJson());
 
 		store.saveSession(Set.of("nectar", "milk"), new Rectangle(10, 20, 800, 600));
 
@@ -70,7 +70,7 @@ class AppPreferencesStoreTest {
 	@Test
 	void rememberFileChooserDirectory() {
 		Path preferencesFile = tempDir.resolve("preferences.json");
-		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.create());
+		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.createJson());
 
 		store.rememberFileChooserDirectory(tempDir.resolve("exports/selection.json"));
 

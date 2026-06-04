@@ -4,16 +4,16 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.store.AppStore;
 
-@UtilityClass
+@Component
 public class SessionRestore {
 
-	public static void restoreIngredientSelection(AppStore store, AppPreferences preferences) {
+	public void restoreIngredientSelection(AppStore store, AppPreferences preferences) {
 		if (!preferences.restoreLastSelection() || preferences.lastSelectedIngredients().isEmpty()) {
 			return;
 		}

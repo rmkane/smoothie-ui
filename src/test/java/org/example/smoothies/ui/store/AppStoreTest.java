@@ -8,9 +8,11 @@ import javax.swing.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.DefaultResourceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.example.smoothies.config.JsonMappers;
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
@@ -28,7 +30,8 @@ class AppStoreTest {
 	@BeforeEach
 	void setUp() {
 		SmoothieService service = new SmoothieServiceImpl();
-		SmoothiesWrapper wrapper = new YamlLoader().load("data/smoothies.yml", SmoothiesWrapper.class);
+		SmoothiesWrapper wrapper = new YamlLoader(new DefaultResourceLoader(), JsonMappers.createYaml())
+				.load("data/smoothies.yml", SmoothiesWrapper.class);
 		recipes = wrapper.smoothies();
 		SmoothieRepository repository = () -> recipes;
 		store = new AppStore(service, repository);
