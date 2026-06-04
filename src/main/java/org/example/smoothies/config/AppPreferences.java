@@ -1,6 +1,21 @@
 package org.example.smoothies.config;
 
-public record AppPreferences(boolean useSystemLookAndFeel) {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-	public static final AppPreferences DEFAULTS = new AppPreferences(true);
+public record AppPreferences(UiTheme theme) {
+
+	public static final AppPreferences DEFAULTS = new AppPreferences(UiTheme.SYSTEM);
+
+	@JsonCreator
+	public static AppPreferences fromJson(@JsonProperty("theme") UiTheme theme,
+			@JsonProperty("useSystemLookAndFeel") Boolean useSystemLookAndFeel) {
+		if (theme != null) {
+			return new AppPreferences(theme);
+		}
+		if (Boolean.FALSE.equals(useSystemLookAndFeel)) {
+			return new AppPreferences(UiTheme.LIGHT);
+		}
+		return new AppPreferences(UiTheme.SYSTEM);
+	}
 }

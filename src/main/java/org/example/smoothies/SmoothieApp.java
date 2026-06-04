@@ -17,7 +17,7 @@ import org.example.smoothies.ui.SmoothieFrame;
 public class SmoothieApp {
 
 	public static void main(String[] args) {
-		LookAndFeelSupport.apply(AppPreferencesStore.bootstrap().useSystemLookAndFeel());
+		LookAndFeelSupport.apply(AppPreferencesStore.bootstrap().theme());
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(SmoothieApp.class).headless(false)
 				.run(args);

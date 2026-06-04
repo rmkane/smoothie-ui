@@ -29,10 +29,24 @@ class AppPreferencesStoreTest {
 		ObjectMapper mapper = JsonMappers.create();
 		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, mapper);
 
-		store.save(new AppPreferences(false));
+		store.save(new AppPreferences(UiTheme.DARK));
 
 		AppPreferencesStore reloaded = AppPreferencesStore.forTesting(preferencesFile, mapper);
-		assertThat(reloaded.get().useSystemLookAndFeel()).isFalse();
-		assertThat(Files.readString(preferencesFile)).contains("useSystemLookAndFeel");
+		assertThat(reloaded.get().theme()).isEqualTo(UiTheme.DARK);
+		assertThat(Files.readString(preferencesFile)).contains("\"theme\"");
+	}
+
+	@Test
+	void migratesLegacyUseSystemLookAndFeel() throws Exception {
+		Path preferencesFile = tempDir.resolve("preferences.json");
+		Files.writeString(preferencesFile, """
+				{
+				  "useSystemLookAndFeel": false
+				}
+				""");
+
+		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, JsonMappers.create());
+
+		assertThat(store.get().theme()).isEqualTo(UiTheme.LIGHT);
 	}
 }
