@@ -18,6 +18,7 @@
 
   <properties>
     <java.version>21</java.version>
+    <flatlaf.version>3.7.1</flatlaf.version>
     <spotless.version>3.6.0</spotless.version>
   </properties>
 
@@ -36,6 +37,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf</artifactId>
+      <version>${flatlaf.version}</version>
     </dependency>
 
     <dependency>

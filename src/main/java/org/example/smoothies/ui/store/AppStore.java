@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.store;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +16,7 @@ import org.example.smoothies.repository.SmoothieRepository;
 import org.example.smoothies.service.SmoothieService;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.state.AppState;
+import org.example.smoothies.util.CountLabels;
 
 @Slf4j
 @Component
@@ -77,13 +78,18 @@ public class AppStore {
 				: makeable.stream().map(smoothieService::formatListEntry).toList();
 
 		int count = makeable.size();
-		String countLabel = count == 1 ? "1 smoothie available" : count + " smoothies available";
-		String selectedSummary = selected.isEmpty()
-				? "Selected: (none)"
-				: "Selected: " + selected.stream().sorted().collect(Collectors.joining(", "));
+		String countLabel = "%s available".formatted(CountLabels.format(count, "smoothie", "smoothies"));
+		String selectedSummary = "Selected: %s".formatted(formatSelectedSummary(selected));
 
-		log.debug("State updated — selected: {}, makeable: {}", selected, count);
+		log.debug("State updated - selected: {}, makeable: {}", selected, count);
 
 		return new AppState(recipes, allIngredients, Set.copyOf(selected), resultLines, countLabel, selectedSummary);
+	}
+
+	private String formatSelectedSummary(Set<String> selected) {
+		if (selected.isEmpty()) {
+			return "(none)";
+		}
+		return selected.stream().sorted().collect(Collectors.joining(", "));
 	}
 }

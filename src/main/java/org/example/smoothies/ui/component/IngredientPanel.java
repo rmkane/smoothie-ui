@@ -11,9 +11,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.springframework.stereotype.Component;
 
-import org.example.smoothies.ui.AppStore;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.state.AppState;
+import org.example.smoothies.ui.store.AppStore;
 
 @Component
 public class IngredientPanel extends JPanel {
@@ -34,7 +34,7 @@ public class IngredientPanel extends JPanel {
 		setPreferredSize(new Dimension(PANEL_WIDTH, 0));
 
 		AppState initial = store.getState();
-		setBorder(BorderFactory.createTitledBorder("Ingredients (" + initial.allIngredients().size() + ")"));
+		setBorder(BorderFactory.createTitledBorder("Ingredients (%d)".formatted(initial.allIngredients().size())));
 
 		add(createHelp(), BorderLayout.NORTH);
 		add(createCheckboxScroll(initial.allIngredients()), BorderLayout.CENTER);
@@ -44,9 +44,12 @@ public class IngredientPanel extends JPanel {
 	}
 
 	private JLabel createHelp() {
-		JLabel help = new JLabel(
-				"<html>Check each ingredient you have.<br>" + "A recipe matches when you have at least one of its "
-						+ "<b>required</b> and one of its <b>optional</b> items.</html>");
+		JLabel help = new JLabel("""
+				<html>
+				Check each ingredient you have.<br>
+				A recipe matches when you have at least one of its <b>required</b> and one of its <b>optional</b> items.
+				</html>
+				""");
 		help.setBorder(new EmptyBorder(0, 4, 0, 4));
 		return help;
 	}
@@ -122,6 +125,6 @@ public class IngredientPanel extends JPanel {
 		if ("Selected: (none)".equals(summary)) {
 			return summary;
 		}
-		return "<html><body style='width: " + SELECTED_SUMMARY_WIDTH_PX + "px'>" + summary + "</body></html>";
+		return "<html><body style='width: %dpx'>%s</body></html>".formatted(SELECTED_SUMMARY_WIDTH_PX, summary);
 	}
 }

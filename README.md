@@ -165,13 +165,19 @@ src/main/java/org/example/smoothies/
 ├── repository/                   # Data access interface + impl
 ├── service/                      # Business logic interface + impl
 └── ui/
-    ├── AppStore.java             # State + message dispatch
-    ├── SmoothieFrame.java        # Main window
-    ├── StateListener.java
+    ├── component/                # Swing panels (Ingredient, Results, Actions)
+    ├── dialog/                   # About, Preferences
+    ├── menu/                     # AppMenuBar, MenuBarBuilder
+    ├── frame/                    # SmoothieFrame (main window)
+    ├── store/                    # AppStore, StateListener
+    ├── file/                     # Import/export selection JSON
+    ├── session/                  # Restore saved selection on startup
+    ├── theme/                    # FlatLaf + system dark detection
+    ├── desktop/                  # Open folder in file manager
+    ├── support/                  # AppInfo, AppIcons
     ├── message/AppMessage.java
-    ├── state/AppState.java
-    └── component/                # Swing panels
-    AppIcons.java                 # Loads /icons/*.png for the frame
+    └── state/AppState.java
+└── util/                         # Generic helpers (CountLabels)
 
 src/main/resources/
     icons/                        # Generated PNGs (make icons)
