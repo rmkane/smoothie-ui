@@ -44,8 +44,8 @@ clean:
 # --- Develop ------------------------------------------------------------------
 
 ##@ Develop
-## dev: Run via Spring Boot (dev profile)
-dev:
+## dev: Run via Spring Boot (dev profile); compile first so IDE-stale classes are not used
+dev: compile
 	$(MVN) spring-boot:run -Dspring-boot.run.profiles=dev
 
 ## debug: Run with remote debugging on port $(DEBUG_PORT)

@@ -3,6 +3,7 @@ package org.example.smoothies.ui.menu;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.ui.dialog.AboutDialog;
 import org.example.smoothies.ui.dialog.PreferencesDialog;
 import org.example.smoothies.ui.file.SelectionFileActions;
+import org.example.smoothies.ui.menu.builder.MenuBarBuilder;
 import org.example.smoothies.ui.store.AppStore;
 
 @Component
@@ -24,41 +26,56 @@ public class AppMenuBar {
 
 	public void install(JFrame frame) {
 		// @formatter:off
-		MenuBarBuilder.forFrame(frame)
-				.menu("File")
-					.item("Import Selection...", createImportSelectionAction(frame))
-					.item("Export Selection...", createExportSelectionAction(frame))
-					.separator()
-					.item("Preferences...", createPreferencesAction(frame))
-					.separator()
-					.item("Exit", createExitAction(frame))
-				.menu("Help")
-					.item("About", createAboutAction(frame))
-				.install();
+		JMenuBar menuBar = MenuBarBuilder.create()
+				.menu("File", file -> file
+						.mnemonic('F')
+						.item("Import Selection...", item -> item
+								.mnemonic('I')
+								.onClick(createImportSelectionAction(frame)))
+						.item("Export Selection...", item -> item
+								.mnemonic('E')
+								.onClick(createExportSelectionAction(frame)))
+						.separator()
+						.item("Preferences...", item -> item
+								.mnemonic('P')
+								.onClick(createPreferencesAction(frame)))
+						.separator()
+						.item("Exit", item -> item
+								.mnemonic('x')
+								.displayedMnemonicIndex(1)
+								.onClick(createExitAction(frame))))
+				.menu("Help", help -> help
+						.mnemonic('H')
+						.item("About", item -> item
+								.mnemonic('A')
+								.onClick(createAboutAction(frame))))
+				.build();
 		// @formatter:on
+
+		frame.setJMenuBar(menuBar);
 	}
 
-	// Import Selection...
+	// Action: File > Import Selection...
 	private Runnable createImportSelectionAction(JFrame frame) {
 		return () -> selectionFileActions.importSelection(frame, store);
 	}
 
-	// Export Selection...
+	// Action: File > Export Selection...
 	private Runnable createExportSelectionAction(JFrame frame) {
 		return () -> selectionFileActions.exportSelection(frame, store);
 	}
 
-	// Preferences...
+	// Action: File > Preferences...
 	private Runnable createPreferencesAction(JFrame frame) {
 		return () -> PreferencesDialog.show(frame, preferencesStore);
 	}
 
-	// Exit
+	// Action: File > Exit
 	private Runnable createExitAction(JFrame frame) {
 		return () -> frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 	}
 
-	// About
+	// Action: Help > About
 	private Runnable createAboutAction(JFrame frame) {
 		return () -> AboutDialog.show(frame);
 	}
