@@ -51,10 +51,9 @@ public class SmoothieServiceImpl implements SmoothieService {
 		StringBuilder report = new StringBuilder("Makeable smoothies: ").append(makeable.size()).append('\n');
 
 		if (makeable.isEmpty()) {
-			report.append("  (none — adjust your ingredient selection)");
-		} else {
-			makeable.forEach(s -> report.append("  • ").append(formatListEntry(s)).append('\n'));
+			return report.append("  (none — adjust your ingredient selection)").toString();
 		}
+		makeable.forEach(s -> report.append("  • ").append(formatListEntry(s)).append('\n'));
 		return report.toString();
 	}
 }

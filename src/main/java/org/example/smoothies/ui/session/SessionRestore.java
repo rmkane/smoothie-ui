@@ -22,8 +22,9 @@ public class SessionRestore {
 		Set<String> restored = preferences.lastSelectedIngredients().stream().filter(known::contains)
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 
-		if (!restored.isEmpty()) {
-			store.dispatch(new AppMessage.IngredientsSelectionChanged(Set.copyOf(restored)));
+		if (restored.isEmpty()) {
+			return;
 		}
+		store.dispatch(new AppMessage.IngredientsSelectionChanged(Set.copyOf(restored)));
 	}
 }

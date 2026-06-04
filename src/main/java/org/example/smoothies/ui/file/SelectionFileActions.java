@@ -75,9 +75,9 @@ public class SelectionFileActions {
 
 			if (!result.unknownIngredients().isEmpty()) {
 				showWarning(parent, "Ignored unknown ingredients:\n" + String.join(", ", result.unknownIngredients()));
-			} else {
-				showInfo(parent, "Imported %d ingredient(s).".formatted(result.selection().size()));
+				return;
 			}
+			showInfo(parent, "Imported %d ingredient(s).".formatted(result.selection().size()));
 		} catch (IOException e) {
 			log.error("Failed to read selection from {}", path, e);
 			showError(parent, "Could not read file:\n" + e.getMessage());
@@ -94,13 +94,14 @@ public class SelectionFileActions {
 		chooser.setAcceptAllFileFilterUsed(false);
 
 		String lastDirectory = preferencesStore.get().lastFileChooserDirectory();
-		if (lastDirectory != null) {
-			File directory = new File(lastDirectory);
-			if (directory.isDirectory()) {
-				chooser.setCurrentDirectory(directory);
-			}
+		if (lastDirectory == null) {
+			return chooser;
 		}
-
+		File directory = new File(lastDirectory);
+		if (!directory.isDirectory()) {
+			return chooser;
+		}
+		chooser.setCurrentDirectory(directory);
 		return chooser;
 	}
 

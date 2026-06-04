@@ -51,9 +51,9 @@ public class LookAndFeelSupport {
 	private static void applySystemTheme() throws UnsupportedLookAndFeelException {
 		if (SystemTheme.isOsDarkTheme()) {
 			FlatDarkLaf.setup();
-		} else {
-			FlatLightLaf.setup();
+			return;
 		}
+		FlatLightLaf.setup();
 	}
 
 	private static void fallbackToCrossPlatform() {

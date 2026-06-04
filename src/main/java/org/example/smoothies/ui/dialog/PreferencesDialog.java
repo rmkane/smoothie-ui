@@ -136,10 +136,11 @@ public class PreferencesDialog {
 
 		preferencesStore.save(updated);
 		boolean themeOrScaleChanged = updated.theme() != current.theme() || updated.uiScale() != current.uiScale();
-		if (themeOrScaleChanged) {
-			LookAndFeelSupport.apply(updated.theme(), updated.uiScale());
-			LookAndFeelSupport.refreshAllWindows();
+		if (!themeOrScaleChanged) {
+			return;
 		}
+		LookAndFeelSupport.apply(updated.theme(), updated.uiScale());
+		LookAndFeelSupport.refreshAllWindows();
 	}
 
 	private static void fitBoxWidth(JComponent component) {
