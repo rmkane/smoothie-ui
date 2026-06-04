@@ -66,9 +66,9 @@ public class AppStore {
 	private void notifyListener(StateListener listener, AppState next) {
 		if (SwingUtilities.isEventDispatchThread()) {
 			listener.onStateChanged(next);
-		} else {
-			SwingUtilities.invokeLater(() -> listener.onStateChanged(next));
+			return;
 		}
+		SwingUtilities.invokeLater(() -> listener.onStateChanged(next));
 	}
 
 	private AppState buildState(Set<String> selected) {

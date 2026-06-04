@@ -30,7 +30,7 @@ public class AppIcons {
 		return null;
 	}
 
-	public static void applyTo(JFrame frame) {
+	public static void install(JFrame frame) {
 		List<Image> images = loadIconImages();
 		if (images.isEmpty()) {
 			return;

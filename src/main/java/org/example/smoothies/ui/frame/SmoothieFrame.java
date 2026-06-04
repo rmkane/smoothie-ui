@@ -17,12 +17,9 @@ import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.ui.component.ActionsPanel;
 import org.example.smoothies.ui.component.IngredientPanel;
 import org.example.smoothies.ui.component.ResultsPanel;
-import org.example.smoothies.ui.menu.AppMenuBar;
 import org.example.smoothies.ui.session.SessionRestore;
 import org.example.smoothies.ui.state.AppState;
 import org.example.smoothies.ui.store.AppStore;
-import org.example.smoothies.ui.support.AppIcons;
-import org.example.smoothies.ui.support.AppInfo;
 
 @Slf4j
 @Component
@@ -34,14 +31,12 @@ public class SmoothieFrame extends JFrame {
 	private final ConfigurableApplicationContext applicationContext;
 
 	public SmoothieFrame(AppStore store, IngredientPanel ingredientPanel, ResultsPanel resultsPanel,
-			ActionsPanel actionsPanel, AppMenuBar appMenuBar, AppPreferencesStore preferencesStore,
+			ActionsPanel actionsPanel, FrameChrome frameChrome, AppPreferencesStore preferencesStore,
 			SessionRestore sessionRestore, ConfigurableApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 
-		AppIcons.applyTo(this);
-		appMenuBar.install(this);
+		frameChrome.install(this);
 
-		setTitle(AppInfo.NAME);
 		setLayout(new BorderLayout(12, 12));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -69,10 +64,11 @@ public class SmoothieFrame extends JFrame {
 	private void restoreWindowBounds(AppPreferences preferences) {
 		if (preferences.windowBounds() != null) {
 			setBounds(preferences.windowBounds().toRectangle());
-		} else {
-			setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-			setLocationRelativeTo(null);
+			return;
 		}
+
+		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		setLocationRelativeTo(null);
 	}
 
 	private void shutdown() {
