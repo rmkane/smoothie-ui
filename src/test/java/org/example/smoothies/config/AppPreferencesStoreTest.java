@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AppPreferencesStoreTest {
@@ -15,7 +17,8 @@ class AppPreferencesStoreTest {
 
 	@Test
 	void returnsDefaultsWhenFileMissing() {
-		AppPreferencesStore store = new AppPreferencesStore(tempDir.resolve("preferences.json"));
+		AppPreferencesStore store = AppPreferencesStore.forTesting(tempDir.resolve("preferences.json"),
+				JsonMappers.create());
 
 		assertThat(store.get()).isEqualTo(AppPreferences.DEFAULTS);
 	}
@@ -23,11 +26,12 @@ class AppPreferencesStoreTest {
 	@Test
 	void savesAndReloadsPreferences() throws Exception {
 		Path preferencesFile = tempDir.resolve("preferences.json");
-		AppPreferencesStore store = new AppPreferencesStore(preferencesFile);
+		ObjectMapper mapper = JsonMappers.create();
+		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, mapper);
 
 		store.save(new AppPreferences(false));
 
-		AppPreferencesStore reloaded = new AppPreferencesStore(preferencesFile);
+		AppPreferencesStore reloaded = AppPreferencesStore.forTesting(preferencesFile, mapper);
 		assertThat(reloaded.get().useSystemLookAndFeel()).isFalse();
 		assertThat(Files.readString(preferencesFile)).contains("useSystemLookAndFeel");
 	}

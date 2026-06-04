@@ -8,19 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class IngredientSelectionJson {
 
 	private final ObjectMapper mapper;
-
-	public IngredientSelectionJson() {
-		this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-	}
 
 	public void write(Path path, IngredientSelectionDocument document) throws IOException {
 		Files.writeString(path, mapper.writeValueAsString(document));

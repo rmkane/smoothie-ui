@@ -1,16 +1,14 @@
 package org.example.smoothies.ui;
 
-import java.awt.*;
-
 import javax.swing.*;
+
+import lombok.experimental.UtilityClass;
 
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.config.AppPreferencesStore;
 
-public final class PreferencesDialog {
-
-	private PreferencesDialog() {
-	}
+@UtilityClass
+public class PreferencesDialog {
 
 	public static void show(JFrame parent, AppPreferencesStore preferencesStore) {
 		AppPreferences current = preferencesStore.get();

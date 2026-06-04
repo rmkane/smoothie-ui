@@ -12,6 +12,8 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import org.example.smoothies.config.JsonMappers;
+
 class IngredientSelectionJsonTest {
 
 	@TempDir
@@ -21,7 +23,7 @@ class IngredientSelectionJsonTest {
 
 	@BeforeEach
 	void setUp() {
-		selectionJson = new IngredientSelectionJson();
+		selectionJson = new IngredientSelectionJson(JsonMappers.create());
 	}
 
 	@Test

@@ -4,32 +4,29 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
 public class AppPreferencesStore {
 
 	private final Path preferencesFile;
 	private final ObjectMapper mapper;
 	private AppPreferences preferences;
 
-	public AppPreferencesStore() {
-		this(AppDirectories.preferencesFile());
+	AppPreferencesStore(Path preferencesFile, ObjectMapper mapper) {
+		this.preferencesFile = preferencesFile;
+		this.mapper = mapper;
+		this.preferences = loadOrDefault(preferencesFile, mapper);
 	}
 
-	AppPreferencesStore(Path preferencesFile) {
-		this.preferencesFile = preferencesFile;
-		this.mapper = new ObjectMapper();
-		this.preferences = loadOrDefault(preferencesFile);
+	static AppPreferencesStore forTesting(Path preferencesFile, ObjectMapper mapper) {
+		return new AppPreferencesStore(preferencesFile, mapper);
 	}
 
 	public static AppPreferences bootstrap() {
-		return loadOrDefault(AppDirectories.preferencesFile());
+		return loadOrDefault(AppDirectories.preferencesFile(), JsonMappers.create());
 	}
 
 	public AppPreferences get() {
@@ -43,7 +40,7 @@ public class AppPreferencesStore {
 	public void save(AppPreferences updated) {
 		try {
 			Files.createDirectories(preferencesFile.getParent());
-			mapper.writerWithDefaultPrettyPrinter().writeValue(preferencesFile.toFile(), updated);
+			mapper.writeValue(preferencesFile.toFile(), updated);
 			this.preferences = updated;
 			log.info("Saved preferences to {}", preferencesFile);
 		} catch (IOException e) {
@@ -51,12 +48,12 @@ public class AppPreferencesStore {
 		}
 	}
 
-	private static AppPreferences loadOrDefault(Path preferencesFile) {
+	private static AppPreferences loadOrDefault(Path preferencesFile, ObjectMapper mapper) {
 		if (!Files.isRegularFile(preferencesFile)) {
 			return AppPreferences.DEFAULTS;
 		}
 		try {
-			AppPreferences loaded = new ObjectMapper().readValue(preferencesFile.toFile(), AppPreferences.class);
+			AppPreferences loaded = mapper.readValue(preferencesFile.toFile(), AppPreferences.class);
 			if (loaded == null) {
 				return AppPreferences.DEFAULTS;
 			}
