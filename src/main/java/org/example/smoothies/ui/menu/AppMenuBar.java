@@ -3,6 +3,7 @@ package org.example.smoothies.ui.menu;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import org.springframework.stereotype.Component;
 
@@ -25,8 +26,9 @@ public class AppMenuBar {
 
 	public void install(JFrame frame) {
 		// @formatter:off
-		MenuBarBuilder.forFrame(frame)
-				.menu("File", 'F', file -> file
+		JMenuBar menuBar = MenuBarBuilder.create()
+				.menu("File", file -> file
+						.mnemonic('F')
 						.item("Import Selection...", item -> item
 								.mnemonic('I')
 								.onClick(createImportSelectionAction(frame)))
@@ -39,14 +41,18 @@ public class AppMenuBar {
 								.onClick(createPreferencesAction(frame)))
 						.separator()
 						.item("Exit", item -> item
-								.mnemonic('x', 1)
+								.mnemonic('x')
+								.displayedMnemonicIndex(1)
 								.onClick(createExitAction(frame))))
-				.menu("Help", 'H', help -> help
+				.menu("Help", help -> help
+						.mnemonic('H')
 						.item("About", item -> item
 								.mnemonic('A')
 								.onClick(createAboutAction(frame))))
-				.install();
+				.build();
 		// @formatter:on
+
+		frame.setJMenuBar(menuBar);
 	}
 
 	// Action: File > Import Selection...

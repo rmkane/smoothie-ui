@@ -8,15 +8,22 @@ public final class MenuBuilder {
 
 	private final JMenu menu;
 
-	MenuBuilder(String name, char mnemonic) {
+	MenuBuilder(String name) {
 		menu = new JMenu(name);
-		if (mnemonic != '\0') {
-			menu.setMnemonic(mnemonic);
-		}
 	}
 
 	JMenu menu() {
 		return menu;
+	}
+
+	public MenuBuilder mnemonic(char mnemonic) {
+		menu.setMnemonic(mnemonic);
+		return this;
+	}
+
+	public MenuBuilder displayedMnemonicIndex(int index) {
+		menu.setDisplayedMnemonicIndex(index);
+		return this;
 	}
 
 	public MenuBuilder item(String text, UnaryOperator<MenuItemBuilder> configure) {

@@ -2,37 +2,27 @@ package org.example.smoothies.ui.menu.builder;
 
 import java.util.function.UnaryOperator;
 
-import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class MenuBarBuilder {
 
-	private final JFrame frame;
 	private final JMenuBar menuBar = new JMenuBar();
 
-	private MenuBarBuilder(JFrame frame) {
-		this.frame = frame;
-	}
-
-	public static MenuBarBuilder forFrame(JFrame frame) {
-		return new MenuBarBuilder(frame);
+	public static MenuBarBuilder create() {
+		return new MenuBarBuilder();
 	}
 
 	public MenuBarBuilder menu(String name, UnaryOperator<MenuBuilder> configure) {
-		return menu(name, '\0', configure);
-	}
-
-	public MenuBarBuilder menu(String name, char mnemonic, UnaryOperator<MenuBuilder> configure) {
-		MenuBuilder menuBuilder = configure.apply(new MenuBuilder(name, mnemonic));
+		MenuBuilder menuBuilder = configure.apply(new MenuBuilder(name));
 		menuBar.add(menuBuilder.menu());
 		return this;
 	}
 
 	public JMenuBar build() {
 		return menuBar;
-	}
-
-	public void install() {
-		frame.setJMenuBar(menuBar);
 	}
 }
