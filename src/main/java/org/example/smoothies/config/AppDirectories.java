@@ -11,6 +11,32 @@ import lombok.experimental.UtilityClass;
 public class AppDirectories {
 
 	public static final String APP_ID = "smoothie-maker";
+	private static final String LOGS_DIR_NAME = "logs";
+
+	/**
+	 * System property set before Spring/logging starts; consumed by
+	 * {@code application.yml}.
+	 */
+	public static final String LOG_DIR_PROPERTY = "smoothie.log.dir";
+
+	/** Call from {@code main} before Spring Boot initializes logging. */
+	public static void configureLoggingDirectory() {
+		System.setProperty(LOG_DIR_PROPERTY, logsDirectory().toAbsolutePath().toString());
+	}
+
+	public static Path logsDirectory() {
+		Path directory = configDirectory().resolve(LOGS_DIR_NAME);
+		try {
+			Files.createDirectories(directory);
+		} catch (IOException e) {
+			throw new UncheckedIOException("Could not create logs directory: " + directory, e);
+		}
+		return directory;
+	}
+
+	public static Path logFile() {
+		return logsDirectory().resolve("smoothie-maker.log");
+	}
 
 	public static Path configDirectory() {
 		Path directory = resolveConfigDirectory();

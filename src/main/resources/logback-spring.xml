@@ -2,10 +2,11 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <springProperty name="LOG_FILE" source="logging.file.name" defaultValue="logs/smoothie-maker.log"/>
+    <springProperty name="LOG_DIR" source="smoothie.log.dir" defaultValue="logs"/>
+    <springProperty name="LOG_FILE" source="logging.file.name" defaultValue="${LOG_DIR}/smoothie-maker.log"/>
     <springProperty name="ROLLING_FILE_NAME_PATTERN"
                     source="logging.logback.rollingpolicy.file-name-pattern"
-                    defaultValue="logs/smoothie-maker-%d{yyyy-MM-dd}.log"/>
+                    defaultValue="${LOG_DIR}/smoothie-maker-%d{yyyy-MM-dd}.log"/>
     <springProperty name="MAX_HISTORY"
                     source="logging.logback.rollingpolicy.max-history"
                     defaultValue="30"/>

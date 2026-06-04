@@ -49,7 +49,7 @@ Override the recipe file:
 make dev -- --smoothies.data-file=data/smoothies.yml
 ```
 
-Logs are written under `logs/` (rolling daily files). See `application.yml` and `logback-spring.xml`.
+Logs are written under `<config-dir>/logs/` (daily rolling `smoothie-maker.log` + `smoothie-maker-YYYY-MM-DD.log`, 30 days retained). Config dir also holds `preferences.json`. See `AppDirectories`, `application.yml`, and `logback-spring.xml`.
 
 ## Architecture overview
 
@@ -206,7 +206,7 @@ smoothies:
 
 logging:
   file:
-    name: logs/smoothie-maker.log
+    name: ${smoothie.log.dir}/smoothie-maker.log
   level:
     org.example.smoothies: DEBUG
 ```
