@@ -1,8 +1,10 @@
 package org.example.smoothies.config;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -46,6 +48,25 @@ public class AppPreferencesStore {
 		} catch (IOException e) {
 			throw new IllegalStateException("Could not save preferences to " + preferencesFile, e);
 		}
+	}
+
+	public void saveSession(Set<String> selectedIngredients, Rectangle windowBounds) {
+		save(preferences.withSession(selectedIngredients, WindowBounds.fromRectangle(windowBounds)));
+	}
+
+	public void rememberFileChooserDirectory(Path path) {
+		if (path == null) {
+			return;
+		}
+		Path directory = Files.isDirectory(path) ? path : path.getParent();
+		if (directory == null) {
+			return;
+		}
+		String directoryString = directory.toAbsolutePath().toString();
+		if (directoryString.equals(preferences.lastFileChooserDirectory())) {
+			return;
+		}
+		save(preferences.withLastFileChooserDirectory(directoryString));
 	}
 
 	private static AppPreferences loadOrDefault(Path preferencesFile, ObjectMapper mapper) {

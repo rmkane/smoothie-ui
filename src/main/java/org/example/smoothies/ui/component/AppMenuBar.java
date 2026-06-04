@@ -1,8 +1,12 @@
 package org.example.smoothies.ui.component;
 
-import javax.swing.*;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
 
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
 
 import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.ui.AboutDialog;
@@ -11,40 +15,51 @@ import org.example.smoothies.ui.PreferencesDialog;
 import org.example.smoothies.ui.SelectionFileActions;
 
 @Component
+@RequiredArgsConstructor
 public class AppMenuBar {
 
 	private final AppStore store;
 	private final SelectionFileActions selectionFileActions;
 	private final AppPreferencesStore preferencesStore;
 
-	public AppMenuBar(AppStore store, SelectionFileActions selectionFileActions, AppPreferencesStore preferencesStore) {
-		this.store = store;
-		this.selectionFileActions = selectionFileActions;
-		this.preferencesStore = preferencesStore;
+	public void install(JFrame frame) {
+		// @formatter:off
+		MenuBarBuilder.forFrame(frame)
+				.menu("File")
+					.item("Import Selection...", createImportSelectionAction(frame))
+					.item("Export Selection...", createExportSelectionAction(frame))
+					.separator()
+					.item("Preferences...", createPreferencesAction(frame))
+					.separator()
+					.item("Exit", createExitAction(frame))
+				.menu("Help")
+					.item("About", createAboutAction(frame))
+				.install();
+		// @formatter:on
 	}
 
-	public void install(JFrame frame) {
-		JMenuBar menuBar = new JMenuBar();
+	// Import Selection...
+	private Runnable createImportSelectionAction(JFrame frame) {
+		return () -> selectionFileActions.importSelection(frame, store);
+	}
 
-		JMenu fileMenu = new JMenu("File");
-		JMenuItem importItem = new JMenuItem("Import Selection...");
-		importItem.addActionListener(e -> selectionFileActions.importSelection(frame, store));
-		JMenuItem exportItem = new JMenuItem("Export Selection...");
-		exportItem.addActionListener(e -> selectionFileActions.exportSelection(frame, store));
-		fileMenu.add(importItem);
-		fileMenu.add(exportItem);
-		fileMenu.addSeparator();
-		JMenuItem preferencesItem = new JMenuItem("Preferences...");
-		preferencesItem.addActionListener(e -> PreferencesDialog.show(frame, preferencesStore));
-		fileMenu.add(preferencesItem);
-		menuBar.add(fileMenu);
+	// Export Selection...
+	private Runnable createExportSelectionAction(JFrame frame) {
+		return () -> selectionFileActions.exportSelection(frame, store);
+	}
 
-		JMenu helpMenu = new JMenu("Help");
-		JMenuItem aboutItem = new JMenuItem("About");
-		aboutItem.addActionListener(e -> AboutDialog.show(frame));
-		helpMenu.add(aboutItem);
+	// Preferences...
+	private Runnable createPreferencesAction(JFrame frame) {
+		return () -> PreferencesDialog.show(frame, preferencesStore);
+	}
 
-		menuBar.add(helpMenu);
-		frame.setJMenuBar(menuBar);
+	// Exit
+	private Runnable createExitAction(JFrame frame) {
+		return () -> frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+	}
+
+	// About
+	private Runnable createAboutAction(JFrame frame) {
+		return () -> AboutDialog.show(frame);
 	}
 }

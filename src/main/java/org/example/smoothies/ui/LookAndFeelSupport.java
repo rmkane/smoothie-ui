@@ -6,6 +6,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatSystemProperties;
 
 import lombok.experimental.UtilityClass;
 
@@ -14,7 +15,8 @@ import org.example.smoothies.config.UiTheme;
 @UtilityClass
 public class LookAndFeelSupport {
 
-	public static void apply(UiTheme theme) {
+	public static void apply(UiTheme theme, float uiScale) {
+		applyUiScale(uiScale);
 		try {
 			switch (theme) {
 				case SYSTEM -> applySystemTheme();
@@ -29,6 +31,11 @@ public class LookAndFeelSupport {
 
 	public static void refreshAllWindows() {
 		FlatLaf.updateUI();
+	}
+
+	private static void applyUiScale(float uiScale) {
+		System.setProperty(FlatSystemProperties.UI_SCALE_ENABLED, "true");
+		System.setProperty(FlatSystemProperties.UI_SCALE, Float.toString(uiScale));
 	}
 
 	private static void applySystemTheme() throws UnsupportedLookAndFeelException {

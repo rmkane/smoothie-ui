@@ -1,5 +1,6 @@
 package org.example.smoothies.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.io.IngredientSelectionDocument;
 import org.example.smoothies.io.IngredientSelectionJson;
 import org.example.smoothies.ui.message.AppMessage;
@@ -27,15 +29,17 @@ public class SelectionFileActions {
 	private static final String DEFAULT_FILENAME = "ingredient-selection.json";
 
 	private final IngredientSelectionJson selectionJson;
+	private final AppPreferencesStore preferencesStore;
 
-	public SelectionFileActions(IngredientSelectionJson selectionJson) {
+	public SelectionFileActions(IngredientSelectionJson selectionJson, AppPreferencesStore preferencesStore) {
 		this.selectionJson = selectionJson;
+		this.preferencesStore = preferencesStore;
 	}
 
 	public void exportSelection(JFrame parent, AppStore store) {
 		JFileChooser chooser = createChooser("Export ingredient selection");
 		chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-		chooser.setSelectedFile(new java.io.File(DEFAULT_FILENAME));
+		chooser.setSelectedFile(new File(DEFAULT_FILENAME));
 
 		if (chooser.showSaveDialog(parent) != JFileChooser.APPROVE_OPTION) {
 			return;
@@ -46,6 +50,7 @@ public class SelectionFileActions {
 			IngredientSelectionDocument document = IngredientSelectionDocument
 					.fromSelection(store.getState().selectedIngredients());
 			selectionJson.write(path, document);
+			preferencesStore.rememberFileChooserDirectory(path);
 			showInfo(parent, "Exported selection to:\n" + path);
 		} catch (IOException e) {
 			log.error("Failed to export selection to {}", path, e);
@@ -67,6 +72,7 @@ public class SelectionFileActions {
 			ImportResult result = resolveSelection(document.selectedIngredients(), store.getState());
 
 			store.dispatch(new AppMessage.IngredientsSelectionChanged(result.selection()));
+			preferencesStore.rememberFileChooserDirectory(path);
 
 			if (!result.unknownIngredients().isEmpty()) {
 				showWarning(parent, "Ignored unknown ingredients:\n" + String.join(", ", result.unknownIngredients()));
@@ -82,11 +88,20 @@ public class SelectionFileActions {
 		}
 	}
 
-	private static JFileChooser createChooser(String title) {
+	private JFileChooser createChooser(String title) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setDialogTitle(title);
 		chooser.setFileFilter(new FileNameExtensionFilter("JSON files (*.json)", "json"));
 		chooser.setAcceptAllFileFilterUsed(false);
+
+		String lastDirectory = preferencesStore.get().lastFileChooserDirectory();
+		if (lastDirectory != null) {
+			File directory = new File(lastDirectory);
+			if (directory.isDirectory()) {
+				chooser.setCurrentDirectory(directory);
+			}
+		}
+
 		return chooser;
 	}
 

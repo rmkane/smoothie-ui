@@ -7,6 +7,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.config.SmoothieProperties;
 import org.example.smoothies.ui.LookAndFeelSupport;
@@ -17,7 +18,8 @@ import org.example.smoothies.ui.SmoothieFrame;
 public class SmoothieApp {
 
 	public static void main(String[] args) {
-		LookAndFeelSupport.apply(AppPreferencesStore.bootstrap().theme());
+		AppPreferences bootstrap = AppPreferencesStore.bootstrap();
+		LookAndFeelSupport.apply(bootstrap.theme(), bootstrap.uiScale());
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(SmoothieApp.class).headless(false)
 				.run(args);
