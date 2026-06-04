@@ -38,6 +38,7 @@ make help    # list targets
 make dev     # Spring Boot (development)
 make prod    # fat JAR (production-like)
 make test    # unit tests
+make hooks   # install git pre-commit (Spotless + compile)
 ```
 
 **App icon:** Window and dock icons load from `src/main/resources/icons/`. Source artwork lives in `assets/logo.png`. After changing the logo, run `make icons` (see [assets/README.md](assets/README.md)).

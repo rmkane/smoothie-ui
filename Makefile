@@ -11,7 +11,7 @@ JVM_DEBUG    := -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:
 # JDK 24+: silence sun.misc.Unsafe warnings from Spotless on newer local JDKs
 export MAVEN_OPTS ?= --sun-misc-unsafe-memory-access=allow
 
-.PHONY: help develop verify build workspace icons \
+.PHONY: help develop verify build workspace icons hooks \
         dev debug run jar prod \
         test compile format lint verify install \
         package build clean jar-path
@@ -40,6 +40,10 @@ jar-path:
 ## clean: Remove build output
 clean:
 	$(MVN) clean
+
+## hooks: Install git pre-commit hook (Spotless + compile)
+hooks:
+	./scripts/install-git-hooks.sh
 
 # --- Develop ------------------------------------------------------------------
 
