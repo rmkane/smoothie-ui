@@ -4,8 +4,10 @@ import javax.swing.*;
 
 import org.springframework.stereotype.Component;
 
+import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.ui.AboutDialog;
 import org.example.smoothies.ui.AppStore;
+import org.example.smoothies.ui.PreferencesDialog;
 import org.example.smoothies.ui.SelectionFileActions;
 
 @Component
@@ -13,10 +15,12 @@ public class AppMenuBar {
 
 	private final AppStore store;
 	private final SelectionFileActions selectionFileActions;
+	private final AppPreferencesStore preferencesStore;
 
-	public AppMenuBar(AppStore store, SelectionFileActions selectionFileActions) {
+	public AppMenuBar(AppStore store, SelectionFileActions selectionFileActions, AppPreferencesStore preferencesStore) {
 		this.store = store;
 		this.selectionFileActions = selectionFileActions;
+		this.preferencesStore = preferencesStore;
 	}
 
 	public void install(JFrame frame) {
@@ -29,6 +33,10 @@ public class AppMenuBar {
 		exportItem.addActionListener(e -> selectionFileActions.exportSelection(frame, store));
 		fileMenu.add(importItem);
 		fileMenu.add(exportItem);
+		fileMenu.addSeparator();
+		JMenuItem preferencesItem = new JMenuItem("Preferences...");
+		preferencesItem.addActionListener(e -> PreferencesDialog.show(frame, preferencesStore));
+		fileMenu.add(preferencesItem);
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");

@@ -1,13 +1,15 @@
 package org.example.smoothies;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.config.SmoothieProperties;
+import org.example.smoothies.ui.LookAndFeelSupport;
 import org.example.smoothies.ui.SmoothieFrame;
 
 @SpringBootApplication
@@ -15,6 +17,8 @@ import org.example.smoothies.ui.SmoothieFrame;
 public class SmoothieApp {
 
 	public static void main(String[] args) {
+		LookAndFeelSupport.apply(AppPreferencesStore.bootstrap().useSystemLookAndFeel());
+
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(SmoothieApp.class).headless(false)
 				.run(args);
 
