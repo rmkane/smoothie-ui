@@ -9,9 +9,9 @@ import com.formdev.flatlaf.util.SystemInfo;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-class SystemTheme {
+public class SystemTheme {
 
-	boolean isOsDarkTheme() {
+	public static boolean isOsDarkTheme() {
 		if (SystemInfo.isMacOS) {
 			return "dark".equalsIgnoreCase(readCommandOutput("defaults", "read", "-g", "AppleInterfaceStyle"));
 		}

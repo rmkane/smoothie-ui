@@ -23,10 +23,20 @@ public class LookAndFeelSupport {
 				case LIGHT -> FlatLightLaf.setup();
 				case DARK -> FlatDarkLaf.setup();
 			}
+			showMenuMnemonics();
 		} catch (UnsupportedLookAndFeelException e) {
 			System.err.println("Could not set look and feel, using default: " + e.getMessage());
 			fallbackToCrossPlatform();
+			showMenuMnemonics();
 		}
+	}
+
+	/**
+	 * FlatLaf hides mnemonic underlines until Alt is pressed; keep them visible
+	 * like classic desktop apps.
+	 */
+	private static void showMenuMnemonics() {
+		UIManager.put("Component.hideMnemonics", false);
 	}
 
 	public static void refreshAllWindows() {
