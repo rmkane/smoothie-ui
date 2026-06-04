@@ -3,10 +3,10 @@ smoothies:
 
 logging:
   file:
-    name: logs/smoothie-maker.log
+    name: ${smoothie.log.dir}/smoothie-maker.log
   logback:
     rollingpolicy:
-      file-name-pattern: logs/smoothie-maker-%d{yyyy-MM-dd}.log
+      file-name-pattern: ${smoothie.log.dir}/smoothie-maker-%d{yyyy-MM-dd}.log
       max-history: 30
   level:
     root: INFO
