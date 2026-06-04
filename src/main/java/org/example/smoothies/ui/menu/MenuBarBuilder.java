@@ -22,18 +22,47 @@ public final class MenuBarBuilder {
 	}
 
 	public MenuBarBuilder menu(String name) {
+		return menu(name, '\0');
+	}
+
+	public MenuBarBuilder menu(String name, char mnemonic) {
 		currentMenu = new JMenu(name);
+		if (mnemonic != '\0') {
+			currentMenu.setMnemonic(mnemonic);
+		}
 		menuBar.add(currentMenu);
 		return this;
 	}
 
 	public MenuBarBuilder item(String text, Runnable action) {
-		return item(text, e -> action.run());
+		return item(text, '\0', -1, action);
+	}
+
+	public MenuBarBuilder item(String text, char mnemonic, Runnable action) {
+		return item(text, mnemonic, -1, action);
+	}
+
+	public MenuBarBuilder item(String text, char mnemonic, int displayedMnemonicIndex, Runnable action) {
+		return item(text, mnemonic, displayedMnemonicIndex, e -> action.run());
 	}
 
 	public MenuBarBuilder item(String text, ActionListener action) {
+		return item(text, '\0', -1, action);
+	}
+
+	public MenuBarBuilder item(String text, char mnemonic, ActionListener action) {
+		return item(text, mnemonic, -1, action);
+	}
+
+	public MenuBarBuilder item(String text, char mnemonic, int displayedMnemonicIndex, ActionListener action) {
 		requireMenu();
 		JMenuItem item = new JMenuItem(text);
+		if (mnemonic != '\0') {
+			item.setMnemonic(mnemonic);
+			if (displayedMnemonicIndex >= 0) {
+				item.setDisplayedMnemonicIndex(displayedMnemonicIndex);
+			}
+		}
 		item.addActionListener(action);
 		currentMenu.add(item);
 		return this;

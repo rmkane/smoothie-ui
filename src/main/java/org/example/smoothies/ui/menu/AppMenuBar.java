@@ -25,15 +25,15 @@ public class AppMenuBar {
 	public void install(JFrame frame) {
 		// @formatter:off
 		MenuBarBuilder.forFrame(frame)
-				.menu("File")
-					.item("Import Selection...", createImportSelectionAction(frame))
-					.item("Export Selection...", createExportSelectionAction(frame))
+				.menu("File", 'F')
+					.item("Import Selection...", 'I', createImportSelectionAction(frame))
+					.item("Export Selection...", 'E', createExportSelectionAction(frame))
 					.separator()
-					.item("Preferences...", createPreferencesAction(frame))
+					.item("Preferences...", 'P', createPreferencesAction(frame))
 					.separator()
-					.item("Exit", createExitAction(frame))
-				.menu("Help")
-					.item("About", createAboutAction(frame))
+					.item("Exit", 'x', 1, createExitAction(frame))
+				.menu("Help", 'H')
+					.item("About", 'A', createAboutAction(frame))
 				.install();
 		// @formatter:on
 	}
