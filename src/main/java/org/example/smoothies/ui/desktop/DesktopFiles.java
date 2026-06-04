@@ -1,4 +1,4 @@
-package org.example.smoothies.util;
+package org.example.smoothies.ui.desktop;
 
 import java.awt.Component;
 import java.awt.Desktop;
@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 import lombok.experimental.UtilityClass;
 
-import org.example.smoothies.ui.AppInfo;
+import org.example.smoothies.ui.support.AppInfo;
 
 @UtilityClass
 public class DesktopFiles {

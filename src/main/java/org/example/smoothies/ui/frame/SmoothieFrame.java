@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.frame;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -15,10 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.ui.component.ActionsPanel;
-import org.example.smoothies.ui.component.AppMenuBar;
 import org.example.smoothies.ui.component.IngredientPanel;
 import org.example.smoothies.ui.component.ResultsPanel;
+import org.example.smoothies.ui.menu.AppMenuBar;
+import org.example.smoothies.ui.session.SessionRestore;
 import org.example.smoothies.ui.state.AppState;
+import org.example.smoothies.ui.store.AppStore;
+import org.example.smoothies.ui.support.AppIcons;
+import org.example.smoothies.ui.support.AppInfo;
 
 @Slf4j
 @Component

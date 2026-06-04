@@ -7,8 +7,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.springframework.stereotype.Component;
 
-import org.example.smoothies.ui.AppStore;
 import org.example.smoothies.ui.state.AppState;
+import org.example.smoothies.ui.store.AppStore;
 
 @Component
 public class ResultsPanel extends JPanel {

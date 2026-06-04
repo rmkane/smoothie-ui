@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.session;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -8,11 +8,12 @@ import lombok.experimental.UtilityClass;
 
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.ui.message.AppMessage;
+import org.example.smoothies.ui.store.AppStore;
 
 @UtilityClass
-class SessionRestore {
+public class SessionRestore {
 
-	static void restoreIngredientSelection(AppStore store, AppPreferences preferences) {
+	public static void restoreIngredientSelection(AppStore store, AppPreferences preferences) {
 		if (!preferences.restoreLastSelection() || preferences.lastSelectedIngredients().isEmpty()) {
 			return;
 		}

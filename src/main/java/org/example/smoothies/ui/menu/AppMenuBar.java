@@ -1,4 +1,4 @@
-package org.example.smoothies.ui.component;
+package org.example.smoothies.ui.menu;
 
 import java.awt.event.WindowEvent;
 
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 import org.example.smoothies.config.AppPreferencesStore;
-import org.example.smoothies.ui.AboutDialog;
-import org.example.smoothies.ui.AppStore;
-import org.example.smoothies.ui.PreferencesDialog;
-import org.example.smoothies.ui.SelectionFileActions;
+import org.example.smoothies.ui.dialog.AboutDialog;
+import org.example.smoothies.ui.dialog.PreferencesDialog;
+import org.example.smoothies.ui.file.SelectionFileActions;
+import org.example.smoothies.ui.store.AppStore;
 
 @Component
 @RequiredArgsConstructor

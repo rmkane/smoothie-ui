@@ -10,8 +10,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.config.SmoothieProperties;
-import org.example.smoothies.ui.LookAndFeelSupport;
-import org.example.smoothies.ui.SmoothieFrame;
+import org.example.smoothies.ui.frame.SmoothieFrame;
+import org.example.smoothies.ui.theme.LookAndFeelSupport;
 
 @SpringBootApplication
 @EnableConfigurationProperties(SmoothieProperties.class)

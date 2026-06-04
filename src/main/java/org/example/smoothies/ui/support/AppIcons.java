@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.support;
 
 import java.awt.Image;
 import java.awt.Taskbar;

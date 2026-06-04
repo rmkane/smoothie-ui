@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -13,7 +13,8 @@ import lombok.experimental.UtilityClass;
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.config.UiTheme;
-import org.example.smoothies.util.DesktopFiles;
+import org.example.smoothies.ui.desktop.DesktopFiles;
+import org.example.smoothies.ui.theme.LookAndFeelSupport;
 
 @UtilityClass
 public class PreferencesDialog {

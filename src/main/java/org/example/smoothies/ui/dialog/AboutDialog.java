@@ -1,10 +1,13 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.dialog;
 
 import java.awt.*;
 
 import javax.swing.*;
 
 import lombok.experimental.UtilityClass;
+
+import org.example.smoothies.ui.support.AppIcons;
+import org.example.smoothies.ui.support.AppInfo;
 
 @UtilityClass
 public class AboutDialog {

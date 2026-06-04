@@ -1,4 +1,4 @@
-package org.example.smoothies.ui.component;
+package org.example.smoothies.ui.menu;
 
 import java.awt.event.ActionListener;
 

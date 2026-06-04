@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.file;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,8 @@ import org.example.smoothies.io.IngredientSelectionDocument;
 import org.example.smoothies.io.IngredientSelectionJson;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.state.AppState;
+import org.example.smoothies.ui.store.AppStore;
+import org.example.smoothies.ui.support.AppInfo;
 
 @Slf4j
 @Component

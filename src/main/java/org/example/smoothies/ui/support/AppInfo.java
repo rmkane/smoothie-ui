@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.support;
 
 import lombok.experimental.UtilityClass;
 

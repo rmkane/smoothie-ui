@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.theme;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.store;
 
 import org.example.smoothies.ui.state.AppState;
 

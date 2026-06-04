@@ -1,4 +1,4 @@
-package org.example.smoothies.ui;
+package org.example.smoothies.ui.theme;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
