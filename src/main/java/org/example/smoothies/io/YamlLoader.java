@@ -3,12 +3,14 @@ package org.example.smoothies.io;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,19 +18,20 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class YamlLoader {
 
-	private final ClassLoader classLoader;
+	private final ResourceLoader resourceLoader;
 	private final ObjectMapper yamlMapper;
 
-	public YamlLoader() {
-		this.classLoader = YamlLoader.class.getClassLoader();
-		this.yamlMapper = new ObjectMapper(new YAMLFactory());
+	public YamlLoader(ResourceLoader resourceLoader, @Qualifier("yamlObjectMapper") ObjectMapper yamlMapper) {
+		this.resourceLoader = resourceLoader;
+		this.yamlMapper = yamlMapper;
 	}
 
 	public <E> E load(String resourcePath, Class<E> clazz) {
-		try (InputStream inputStream = classLoader.getResourceAsStream(resourcePath)) {
-			if (inputStream == null) {
-				throw new IllegalStateException("Classpath resource not found: " + resourcePath);
-			}
+		Resource resource = resourceLoader.getResource("classpath:" + resourcePath);
+		if (!resource.exists()) {
+			throw new IllegalStateException("Classpath resource not found: " + resourcePath);
+		}
+		try (InputStream inputStream = resource.getInputStream()) {
 			E result = yamlMapper.readValue(inputStream, clazz);
 			if (result == null) {
 				throw new IllegalStateException("YAML was empty: " + resourcePath);

@@ -5,9 +5,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.DefaultResourceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.example.smoothies.config.JsonMappers;
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
@@ -21,7 +23,8 @@ class SmoothieServiceTest {
 	@BeforeEach
 	void setUp() {
 		smoothieService = new SmoothieServiceImpl();
-		SmoothiesWrapper wrapper = new YamlLoader().load("data/smoothies.yml", SmoothiesWrapper.class);
+		SmoothiesWrapper wrapper = new YamlLoader(new DefaultResourceLoader(), JsonMappers.createYaml())
+				.load("data/smoothies.yml", SmoothiesWrapper.class);
 		smoothies = wrapper.smoothies();
 	}
 

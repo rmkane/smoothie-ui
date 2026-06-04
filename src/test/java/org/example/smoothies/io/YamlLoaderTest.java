@@ -2,10 +2,12 @@ package org.example.smoothies.io;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.DefaultResourceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.example.smoothies.config.JsonMappers;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
 
@@ -15,7 +17,7 @@ class YamlLoaderTest {
 
 	@BeforeEach
 	void setUp() {
-		yamlLoader = new YamlLoader();
+		yamlLoader = new YamlLoader(new DefaultResourceLoader(), JsonMappers.createYaml());
 	}
 
 	@Test

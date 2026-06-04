@@ -19,11 +19,15 @@ public class SmoothieRepositoryImpl implements SmoothieRepository {
 	private final List<Smoothie> smoothies;
 
 	public SmoothieRepositoryImpl(YamlLoader yamlLoader, SmoothieProperties properties) {
+		this.smoothies = List.copyOf(loadSmoothies(yamlLoader, properties));
+	}
+
+	private static List<Smoothie> loadSmoothies(YamlLoader yamlLoader, SmoothieProperties properties) {
 		String dataFile = properties.dataFile();
 		log.debug("Loading smoothies from classpath resource: {}", dataFile);
 		SmoothiesWrapper wrapper = yamlLoader.load(dataFile, SmoothiesWrapper.class);
-		this.smoothies = List.copyOf(wrapper.smoothies());
-		log.info("Loaded {} smoothie recipes from {}", smoothies.size(), dataFile);
+		log.info("Loaded {} smoothie recipes from {}", wrapper.smoothies().size(), dataFile);
+		return wrapper.smoothies();
 	}
 
 	@Override

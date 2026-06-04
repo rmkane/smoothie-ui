@@ -6,18 +6,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 public class AppPreferencesStore {
 
 	private final Path preferencesFile;
 	private final ObjectMapper mapper;
 	private AppPreferences preferences;
 
-	AppPreferencesStore(Path preferencesFile, ObjectMapper mapper) {
+	public AppPreferencesStore(Path preferencesFile, ObjectMapper mapper) {
 		this.preferencesFile = preferencesFile;
 		this.mapper = mapper;
 		this.preferences = loadOrDefault(preferencesFile, mapper);
@@ -28,7 +31,7 @@ public class AppPreferencesStore {
 	}
 
 	public static AppPreferences bootstrap() {
-		return loadOrDefault(AppDirectories.preferencesFile(), JsonMappers.create());
+		return loadOrDefault(AppDirectories.preferencesFile(), JsonMappers.createJson());
 	}
 
 	public AppPreferences get() {

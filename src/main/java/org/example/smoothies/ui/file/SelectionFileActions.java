@@ -14,6 +14,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.example.smoothies.config.AppPreferencesStore;
@@ -26,17 +27,13 @@ import org.example.smoothies.ui.support.AppInfo;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SelectionFileActions {
 
 	private static final String DEFAULT_FILENAME = "ingredient-selection.json";
 
 	private final IngredientSelectionJson selectionJson;
 	private final AppPreferencesStore preferencesStore;
-
-	public SelectionFileActions(IngredientSelectionJson selectionJson, AppPreferencesStore preferencesStore) {
-		this.selectionJson = selectionJson;
-		this.preferencesStore = preferencesStore;
-	}
 
 	public void exportSelection(JFrame parent, AppStore store) {
 		JFileChooser chooser = createChooser("Export ingredient selection");

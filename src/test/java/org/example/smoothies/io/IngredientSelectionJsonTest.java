@@ -23,7 +23,7 @@ class IngredientSelectionJsonTest {
 
 	@BeforeEach
 	void setUp() {
-		selectionJson = new IngredientSelectionJson(JsonMappers.create());
+		selectionJson = new IngredientSelectionJson(JsonMappers.createJson());
 	}
 
 	@Test

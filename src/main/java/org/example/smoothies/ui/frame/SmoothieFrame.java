@@ -30,11 +30,12 @@ public class SmoothieFrame extends JFrame {
 
 	private static final int WINDOW_WIDTH = 780;
 	private static final int WINDOW_HEIGHT = 520;
+
 	private final ConfigurableApplicationContext applicationContext;
 
 	public SmoothieFrame(AppStore store, IngredientPanel ingredientPanel, ResultsPanel resultsPanel,
 			ActionsPanel actionsPanel, AppMenuBar appMenuBar, AppPreferencesStore preferencesStore,
-			ConfigurableApplicationContext applicationContext) {
+			SessionRestore sessionRestore, ConfigurableApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 
 		AppIcons.applyTo(this);
@@ -50,7 +51,7 @@ public class SmoothieFrame extends JFrame {
 		add(actionsPanel, BorderLayout.SOUTH);
 
 		restoreWindowBounds(preferencesStore.get());
-		SessionRestore.restoreIngredientSelection(store, preferencesStore.get());
+		sessionRestore.restoreIngredientSelection(store, preferencesStore.get());
 
 		addWindowListener(new WindowAdapter() {
 			@Override
