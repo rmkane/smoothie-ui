@@ -13,12 +13,10 @@ import org.example.smoothies.ui.store.AppStore;
 @Component
 public class ActionsPanel extends JPanel {
 
-	private final AppStore store;
 	private final UiMessages messages;
 	private final JButton logReportButton;
 
 	public ActionsPanel(AppStore store, UiMessages messages) {
-		this.store = store;
 		this.messages = messages;
 		setLayout(new BorderLayout());
 
