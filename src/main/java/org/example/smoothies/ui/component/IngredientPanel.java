@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import org.springframework.stereotype.Component;
 
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.state.AppState;
 import org.example.smoothies.ui.store.AppStore;
@@ -24,32 +26,51 @@ public class IngredientPanel extends JPanel {
 	private static final int SELECTED_SUMMARY_MAX_HEIGHT = 72;
 
 	private final AppStore store;
+	private final UiMessages messages;
 	private final List<JCheckBox> checkBoxes = new ArrayList<>();
-	private final JLabel selectedLabel = new JLabel();
+	private final JLabel helpLabel;
+	private final JLabel selectedLabel;
+	private final JButton selectAllButton;
+	private final JButton clearAllButton;
 	private boolean suppressEvents;
 
-	public IngredientPanel(AppStore store) {
+	public IngredientPanel(AppStore store, UiMessages messages) {
 		this.store = store;
+		this.messages = messages;
 		setLayout(new BorderLayout(0, 8));
 		setPreferredSize(new Dimension(PANEL_WIDTH, 0));
 
 		AppState initial = store.getState();
-		setBorder(BorderFactory.createTitledBorder("Ingredients (%d)".formatted(initial.allIngredients().size())));
+		setBorder(
+				BorderFactory.createTitledBorder(messages.get("ingredients.border", initial.allIngredients().size())));
 
-		add(createHelp(), BorderLayout.NORTH);
+		helpLabel = createHelp();
+		add(helpLabel, BorderLayout.NORTH);
 		add(createCheckboxScroll(initial.allIngredients()), BorderLayout.CENTER);
+
+		selectAllButton = new JButton(messages.get("ingredients.selectAll"));
+		selectAllButton.addActionListener(e -> store.dispatch(new AppMessage.SelectAllIngredients()));
+		clearAllButton = new JButton(messages.get("ingredients.clearAll"));
+		clearAllButton.addActionListener(e -> store.dispatch(new AppMessage.ClearAllIngredients()));
+		selectedLabel = new JLabel();
 		add(createFooter(), BorderLayout.SOUTH);
 
 		store.subscribe(this::render);
 	}
 
+	public void applyLocale() {
+		AppState state = store.getState();
+		TitledBorder border = BorderFactory
+				.createTitledBorder(messages.get("ingredients.border", state.allIngredients().size()));
+		setBorder(border);
+		helpLabel.setText(messages.get("ingredients.help"));
+		selectAllButton.setText(messages.get("ingredients.selectAll"));
+		clearAllButton.setText(messages.get("ingredients.clearAll"));
+		render(state);
+	}
+
 	private JLabel createHelp() {
-		JLabel help = new JLabel("""
-				<html>
-				Check each ingredient you have.<br>
-				A recipe matches when you have at least one of its <b>required</b> and one of its <b>optional</b> items.
-				</html>
-				""");
+		JLabel help = new JLabel(messages.get("ingredients.help"));
 		help.setBorder(new EmptyBorder(0, 4, 0, 4));
 		return help;
 	}
@@ -74,15 +95,9 @@ public class IngredientPanel extends JPanel {
 	}
 
 	private JPanel createFooter() {
-		JButton selectAll = new JButton("Select all");
-		selectAll.addActionListener(e -> store.dispatch(new AppMessage.SelectAllIngredients()));
-
-		JButton clearAll = new JButton("Clear all");
-		clearAll.addActionListener(e -> store.dispatch(new AppMessage.ClearAllIngredients()));
-
 		JPanel actions = new JPanel(new GridLayout(1, 2, 8, 0));
-		actions.add(selectAll);
-		actions.add(clearAll);
+		actions.add(selectAllButton);
+		actions.add(clearAllButton);
 
 		selectedLabel.setVerticalAlignment(SwingConstants.TOP);
 		JScrollPane selectedScroll = new JScrollPane(selectedLabel);
@@ -115,14 +130,15 @@ public class IngredientPanel extends JPanel {
 		for (JCheckBox checkBox : checkBoxes) {
 			checkBox.setSelected(state.selectedIngredients().contains(checkBox.getText()));
 		}
-		selectedLabel.setText(formatSelectedSummary(state.selectedSummary()));
+		selectedLabel.setText(formatSelectedSummary(state));
 		revalidate();
 		repaint();
 		suppressEvents = false;
 	}
 
-	private String formatSelectedSummary(String summary) {
-		if ("Selected: (none)".equals(summary)) {
+	private String formatSelectedSummary(AppState state) {
+		String summary = state.selectedSummary();
+		if (state.selectedIngredients().isEmpty()) {
 			return summary;
 		}
 		return "<html><body style='width: %dpx'>%s</body></html>".formatted(SELECTED_SUMMARY_WIDTH_PX, summary);

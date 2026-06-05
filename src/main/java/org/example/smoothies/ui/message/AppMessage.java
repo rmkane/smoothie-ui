@@ -15,4 +15,7 @@ public sealed interface AppMessage {
 
 	record LogReportRequested() implements AppMessage {
 	}
+
+	record LocaleChanged() implements AppMessage {
+	}
 }
