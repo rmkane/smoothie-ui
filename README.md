@@ -35,9 +35,12 @@ This project uses a small **unidirectional, state-driven UI** pattern: UI compon
 
 ```bash
 make help    # list targets
-make dev     # Spring Boot (development)
+make dev     # Spring Boot (development; compiles first)
 make prod    # fat JAR (production-like)
 make test    # unit tests
+make verify  # tests + package
+make lint    # Spotless check + compile
+make format  # apply Spotless
 make hooks   # install git pre-commit (Spotless + compile)
 ```
 
@@ -49,7 +52,7 @@ Override the recipe file:
 make dev -- --smoothies.data-file=data/smoothies.yml
 ```
 
-Logs are written under `<config-dir>/logs/` (daily rolling `smoothie-maker.log` + `smoothie-maker-YYYY-MM-DD.log`, 30 days retained). Config dir also holds `preferences.json`. See `AppDirectories`, `application.yml`, and `logback-spring.xml`.
+User data lives in a per-OS config directory (`smoothie-maker` under Application Support, `%APPDATA%`, or `~/.config`). It holds `preferences.json` (theme, UI scale, window bounds, saved ingredient selection) and `logs/` (daily rolling `smoothie-maker.log` + `smoothie-maker-YYYY-MM-DD.log`, 30 days retained). See [Configuration](#configuration).
 
 ## Architecture overview
 
@@ -57,10 +60,10 @@ Spring Boot provides **dependency injection** and **configuration**. Swing provi
 
 | Layer | Responsibility |
 | ----- | -------------- |
-| **Bootstrap** (`SmoothieApp`) | Starts Spring with `headless(false)`, launches the frame on the EDT |
+| **Bootstrap** (`SmoothieApp`) | Configures log dir, loads bootstrap preferences, applies FlatLaf, starts Spring with `headless(false)`, shows `SmoothieFrame` on the EDT |
 | **Domain** (`service`, `repository`, `model`) | Business rules and recipe data (no Swing types) |
 | **UI** (`ui.*`) | State, messages, panels, frame layout |
-| **Infrastructure** (`io`, `config`) | YAML loading, `application.yml` properties |
+| **Infrastructure** (`io`, `config`) | YAML/JSON I/O, app directories, preferences, Jackson beans |
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,7 +145,9 @@ Panels stay dumb where possible:
 - **`IngredientPanel`** — publishes selection messages; `render()` syncs checkboxes and the selected summary
 - **`ResultsPanel`** — only `render(state)` (passive view)
 - **`ActionsPanel`** — dispatches `LogReportRequested`
-- **`SmoothieFrame`** — layout, window chrome, shutdown
+- **`SmoothieFrame`** — layout, window bounds, session restore, shutdown
+- **`FrameChrome`** — icons, menu bar, title (`AppMenuBar` via fluent `MenuBarBuilder`)
+- **`AppMenuBar`** — File (import/export selection, preferences, exit) and Help (about)
 
 ## Domain layer (Spring services)
 
@@ -150,8 +155,10 @@ Panels stay dumb where possible:
 | --------- | ---- |
 | `SmoothieRepository` | Loads recipes from YAML at startup |
 | `SmoothieService` | `canMake`, `findMakeable`, formatting helpers |
-| `YamlLoader` | Jackson YAML → Java records |
+| `YamlLoader` | Spring bean; Jackson YAML → Java records |
+| `IngredientSelectionJson` | Import/export of selected ingredients as JSON |
 | `SmoothieProperties` | `smoothies.data-file` from `application.yml` |
+| `AppPreferencesStore` | Persists theme, scale, bounds, and selection to `preferences.json` |
 
 Models are **Java records** (`Smoothie`, `Ingredients`, `SmoothiesWrapper`).
 
@@ -159,46 +166,80 @@ Models are **Java records** (`Smoothie`, `Ingredients`, `SmoothiesWrapper`).
 
 ```text
 src/main/java/org/example/smoothies/
-├── SmoothieApp.java              # Spring Boot entry point
-├── config/SmoothieProperties.java
-├── io/YamlLoader.java
-├── model/                        # Recipe records
-├── repository/                   # Data access interface + impl
-├── service/                      # Business logic interface + impl
+├── SmoothieApp.java
+├── config/
+│   ├── AppConfig.java            # preferences.json path bean
+│   ├── AppDirectories.java       # config + logs directories
+│   ├── AppPreferences.java       # persisted settings record
+│   ├── AppPreferencesStore.java
+│   ├── JacksonConfig.java        # JSON + YAML ObjectMapper beans
+│   ├── SmoothieProperties.java
+│   ├── UiTheme.java, WindowBounds.java
+├── io/
+│   ├── YamlLoader.java
+│   ├── IngredientSelectionJson.java
+│   └── IngredientSelectionDocument.java
+├── model/                              # Smoothie, Ingredients, SmoothiesWrapper
+├── repository/                         # interface + impl/
+├── service/                            # interface + impl/
+├── util/CountLabels.java
 └── ui/
-    ├── component/                # Swing panels (Ingredient, Results, Actions)
-    ├── dialog/                   # About, Preferences
-    ├── menu/                     # AppMenuBar, MenuBarBuilder
-    ├── frame/                    # SmoothieFrame (main window)
-    ├── store/                    # AppStore, StateListener
-    ├── file/                     # Import/export selection JSON
-    ├── session/                  # Restore saved selection on startup
-    ├── theme/                    # FlatLaf + system dark detection
-    ├── desktop/                  # Open folder in file manager
-    ├── support/                  # AppInfo, AppIcons
+    ├── component/                      # IngredientPanel, ResultsPanel, ActionsPanel
+    ├── dialog/                         # AboutDialog, PreferencesDialog
+    ├── menu/
+    │   ├── AppMenuBar.java
+    │   └── builder/                    # MenuBarBuilder, MenuBuilder, MenuItemBuilder
+    ├── frame/                          # SmoothieFrame, FrameChrome
+    ├── store/                          # AppStore, StateListener
+    ├── file/SelectionFileActions.java
+    ├── session/SessionRestore.java
+    ├── theme/                          # LookAndFeelSupport, SystemTheme
+    ├── desktop/DesktopFiles.java
+    ├── support/                        # AppInfo, AppIcons
     ├── message/AppMessage.java
     └── state/AppState.java
-└── util/                         # Generic helpers (CountLabels)
 
 src/main/resources/
-    icons/                        # Generated PNGs (make icons)
 ├── application.yml
 ├── logback-spring.xml
-└── data/smoothies.yml
+├── data/smoothies.yml
+└── icons/                             # generated PNGs (make icons)
 
-src/test/java/                    # AppStore, service, YamlLoader tests
+src/test/java/org/example/smoothies/
+├── config/                            # AppDirectories, AppPreferencesStore
+├── io/                                # YamlLoader, IngredientSelectionJson
+├── service/SmoothieServiceTest
+├── ui/store/AppStoreTest
+└── util/CountLabelsTest
 
-assets/
-    logo.png, logo.svg            # Source artwork (not loaded at runtime)
-    icons/                        # app.ico, app.icns for native packaging
-
+assets/                                # source artwork (not loaded at runtime)
 scripts/
-    generate_icons.py             # ImageMagick icon generator
+├── generate_icons.py
+├── install-git-hooks.sh
+└── git-hooks/pre-commit
+
+.github/workflows/ci.yml               # Spotless, compile, test, package
 ```
 
 ## Configuration
 
-`application.yml`:
+**Recipe data** — `smoothies.data-file` in `application.yml` (classpath `data/smoothies.yml` by default). Override at run time:
+
+```bash
+make dev -- --smoothies.data-file=file:/path/to/smoothies.yml
+```
+
+**User config directory** (`AppDirectories`, app id `smoothie-maker`):
+
+| OS | Location |
+| -- | -------- |
+| macOS | `~/Library/Application Support/smoothie-maker/` |
+| Windows | `%APPDATA%/smoothie-maker/` |
+| Linux | `$XDG_CONFIG_HOME/smoothie-maker/` or `~/.config/smoothie-maker/` |
+
+`SmoothieApp.main` sets `smoothie.log.dir` to `<config-dir>/logs/` before Spring starts.
+
+**`application.yml`:**
 
 ```yaml
 smoothies:
@@ -207,9 +248,16 @@ smoothies:
 logging:
   file:
     name: ${smoothie.log.dir}/smoothie-maker.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${smoothie.log.dir}/smoothie-maker-%d{yyyy-MM-dd}.log
+      max-history: 30
   level:
+    root: INFO
     org.example.smoothies: DEBUG
 ```
+
+Rolling file details are also in `logback-spring.xml` (`TimeBasedRollingPolicy`, daily archives).
 
 ## Why Spring Boot for a Swing app?
 
@@ -222,13 +270,23 @@ The UI does not use Spring MVC or the web stack; only the core container and log
 
 ## Testing
 
-- **`AppStoreTest`** — state transitions and subscriptions (no GUI)
-- **`SmoothieServiceTest`** — ingredient catalog and matching rules
-- **`YamlLoaderTest`** — load errors and parsing
+| Test | Focus |
+| ---- | ----- |
+| `AppStoreTest` | State transitions and subscriptions (no GUI) |
+| `SmoothieServiceTest` | Ingredient catalog and matching rules |
+| `YamlLoaderTest` | Load errors and YAML parsing |
+| `IngredientSelectionJsonTest` | Selection import/export JSON |
+| `AppPreferencesStoreTest` | Load/save `preferences.json` |
+| `AppDirectoriesTest` | Config and logs directory layout |
+| `CountLabelsTest` | Pluralized count labels |
 
 ```bash
+make test
+# or
 mvn test
 ```
+
+CI (`.github/workflows/ci.yml`) runs Spotless, compile, tests, and package on pushes/PRs to `main` and `develop`.
 
 ## Design notes and tradeoffs
 
@@ -247,6 +305,6 @@ mvn test
 ### Possible extensions
 
 - Startup error dialog if YAML fails to load
-- Load recipes from an external file path (`file:./config/...`)
+- External recipe path is supported via `--smoothies.data-file` (see [Configuration](#configuration))
 - Export report to a file instead of only logging
 - Split `SmoothieFrame` / presenter further if the app grows
