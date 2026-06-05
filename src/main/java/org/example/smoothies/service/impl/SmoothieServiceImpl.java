@@ -7,12 +7,18 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.model.Ingredients;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.service.SmoothieService;
 
 @Service
+@RequiredArgsConstructor
 public class SmoothieServiceImpl implements SmoothieService {
+
+	private final UiMessages messages;
 
 	@Override
 	public List<String> getAllIngredients(List<Smoothie> smoothies) {
@@ -41,17 +47,17 @@ public class SmoothieServiceImpl implements SmoothieService {
 	@Override
 	public String formatListEntry(Smoothie smoothie) {
 		Ingredients ingredients = smoothie.ingredients();
-		return String.format("%s  (required: %s, optional: %s)", smoothie.name(),
-				String.join(", ", ingredients.required()), String.join(", ", ingredients.optional()));
+		return messages.get("smoothie.listEntry", smoothie.name(), String.join(", ", ingredients.required()),
+				String.join(", ", ingredients.optional()));
 	}
 
 	@Override
 	public String formatMakeableReport(List<Smoothie> smoothies, Set<String> selected) {
 		List<Smoothie> makeable = findMakeable(smoothies, selected);
-		StringBuilder report = new StringBuilder("Makeable smoothies: ").append(makeable.size()).append('\n');
+		StringBuilder report = new StringBuilder(messages.get("report.header", makeable.size())).append('\n');
 
 		if (makeable.isEmpty()) {
-			return report.append("  (none — adjust your ingredient selection)").toString();
+			return report.append(messages.get("report.none")).toString();
 		}
 		makeable.forEach(s -> report.append("  • ").append(formatListEntry(s)).append('\n'));
 		return report.toString();

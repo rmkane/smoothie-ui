@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.example.smoothies.config.AppPreferencesStore;
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.io.IngredientSelectionDocument;
 import org.example.smoothies.io.IngredientSelectionJson;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.state.AppState;
 import org.example.smoothies.ui.store.AppStore;
-import org.example.smoothies.ui.support.AppInfo;
 
 @Slf4j
 @Component
@@ -34,9 +34,10 @@ public class SelectionFileActions {
 
 	private final IngredientSelectionJson selectionJson;
 	private final AppPreferencesStore preferencesStore;
+	private final UiMessages messages;
 
 	public void exportSelection(JFrame parent, AppStore store) {
-		JFileChooser chooser = createChooser("Export ingredient selection");
+		JFileChooser chooser = createChooser(messages.get("file.export.title"));
 		chooser.setDialogType(JFileChooser.SAVE_DIALOG);
 		chooser.setSelectedFile(new File(DEFAULT_FILENAME));
 
@@ -50,15 +51,15 @@ public class SelectionFileActions {
 					.fromSelection(store.getState().selectedIngredients());
 			selectionJson.write(path, document);
 			preferencesStore.rememberFileChooserDirectory(path);
-			showInfo(parent, "Exported selection to:\n" + path);
+			showInfo(parent, messages.get("file.export.success", path));
 		} catch (IOException e) {
 			log.error("Failed to export selection to {}", path, e);
-			showError(parent, "Could not export selection:\n" + e.getMessage());
+			showError(parent, messages.get("file.export.error", e.getMessage()));
 		}
 	}
 
 	public void importSelection(JFrame parent, AppStore store) {
-		JFileChooser chooser = createChooser("Import ingredient selection");
+		JFileChooser chooser = createChooser(messages.get("file.import.title"));
 		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 
 		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
@@ -74,23 +75,24 @@ public class SelectionFileActions {
 			preferencesStore.rememberFileChooserDirectory(path);
 
 			if (!result.unknownIngredients().isEmpty()) {
-				showWarning(parent, "Ignored unknown ingredients:\n" + String.join(", ", result.unknownIngredients()));
+				showWarning(parent,
+						messages.get("file.import.unknown", String.join(", ", result.unknownIngredients())));
 				return;
 			}
-			showInfo(parent, "Imported %d ingredient(s).".formatted(result.selection().size()));
+			showInfo(parent, messages.get("file.import.success", result.selection().size()));
 		} catch (IOException e) {
 			log.error("Failed to read selection from {}", path, e);
-			showError(parent, "Could not read file:\n" + e.getMessage());
+			showError(parent, messages.get("file.read.error", e.getMessage()));
 		} catch (IllegalArgumentException e) {
 			log.warn("Invalid selection file {}: {}", path, e.getMessage());
-			showError(parent, "Invalid selection file:\n" + e.getMessage());
+			showError(parent, messages.get("file.invalid", e.getMessage()));
 		}
 	}
 
 	private JFileChooser createChooser(String title) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setDialogTitle(title);
-		chooser.setFileFilter(new FileNameExtensionFilter("JSON files (*.json)", "json"));
+		chooser.setFileFilter(new FileNameExtensionFilter(messages.get("file.filter.json"), "json"));
 		chooser.setAcceptAllFileFilterUsed(false);
 
 		String lastDirectory = preferencesStore.get().lastFileChooserDirectory();
@@ -129,16 +131,16 @@ public class SelectionFileActions {
 		return new ImportResult(Set.copyOf(selection), unknown.stream().sorted().collect(Collectors.toList()));
 	}
 
-	private static void showInfo(JFrame parent, String message) {
-		JOptionPane.showMessageDialog(parent, message, AppInfo.NAME, JOptionPane.INFORMATION_MESSAGE);
+	private void showInfo(JFrame parent, String message) {
+		JOptionPane.showMessageDialog(parent, message, messages.get("app.name"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	private static void showWarning(JFrame parent, String message) {
-		JOptionPane.showMessageDialog(parent, message, AppInfo.NAME, JOptionPane.WARNING_MESSAGE);
+	private void showWarning(JFrame parent, String message) {
+		JOptionPane.showMessageDialog(parent, message, messages.get("app.name"), JOptionPane.WARNING_MESSAGE);
 	}
 
-	private static void showError(JFrame parent, String message) {
-		JOptionPane.showMessageDialog(parent, message, AppInfo.NAME, JOptionPane.ERROR_MESSAGE);
+	private void showError(JFrame parent, String message) {
+		JOptionPane.showMessageDialog(parent, message, messages.get("app.name"), JOptionPane.ERROR_MESSAGE);
 	}
 
 	private record ImportResult(Set<String> selection, List<String> unknownIngredients) {

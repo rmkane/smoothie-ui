@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
-import org.example.smoothies.config.AppPreferencesStore;
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.ui.dialog.AboutDialog;
 import org.example.smoothies.ui.dialog.PreferencesDialog;
 import org.example.smoothies.ui.file.SelectionFileActions;
@@ -22,32 +22,34 @@ public class AppMenuBar {
 
 	private final AppStore store;
 	private final SelectionFileActions selectionFileActions;
-	private final AppPreferencesStore preferencesStore;
+	private final PreferencesDialog preferencesDialog;
+	private final AboutDialog aboutDialog;
+	private final UiMessages messages;
 
 	public void install(JFrame frame) {
 		// @formatter:off
 		JMenuBar menuBar = MenuBarBuilder.create()
-				.menu("File", file -> file
-						.mnemonic('F')
-						.item("Import Selection...", item -> item
-								.mnemonic('I')
+				.menu(messages.get("menu.file"), file -> file
+						.mnemonic(messages.mnemonic("menu.file.mnemonic"))
+						.item(messages.get("menu.file.import"), item -> item
+								.mnemonic(messages.mnemonic("menu.file.import.mnemonic"))
 								.onClick(createImportSelectionAction(frame)))
-						.item("Export Selection...", item -> item
-								.mnemonic('E')
+						.item(messages.get("menu.file.export"), item -> item
+								.mnemonic(messages.mnemonic("menu.file.export.mnemonic"))
 								.onClick(createExportSelectionAction(frame)))
 						.separator()
-						.item("Preferences...", item -> item
-								.mnemonic('P')
+						.item(messages.get("menu.file.preferences"), item -> item
+								.mnemonic(messages.mnemonic("menu.file.preferences.mnemonic"))
 								.onClick(createPreferencesAction(frame)))
 						.separator()
-						.item("Exit", item -> item
-								.mnemonic('x')
-								.displayedMnemonicIndex(1)
+						.item(messages.get("menu.file.exit"), item -> item
+								.mnemonic(messages.mnemonic("menu.file.exit.mnemonic"))
+								.displayedMnemonicIndex(messages.mnemonicIndex("menu.file.exit.mnemonicIndex"))
 								.onClick(createExitAction(frame))))
-				.menu("Help", help -> help
-						.mnemonic('H')
-						.item("About", item -> item
-								.mnemonic('A')
+				.menu(messages.get("menu.help"), help -> help
+						.mnemonic(messages.mnemonic("menu.help.mnemonic"))
+						.item(messages.get("menu.help.about"), item -> item
+								.mnemonic(messages.mnemonic("menu.help.about.mnemonic"))
 								.onClick(createAboutAction(frame))))
 				.build();
 		// @formatter:on
@@ -55,28 +57,23 @@ public class AppMenuBar {
 		frame.setJMenuBar(menuBar);
 	}
 
-	// Action: File > Import Selection...
 	private Runnable createImportSelectionAction(JFrame frame) {
 		return () -> selectionFileActions.importSelection(frame, store);
 	}
 
-	// Action: File > Export Selection...
 	private Runnable createExportSelectionAction(JFrame frame) {
 		return () -> selectionFileActions.exportSelection(frame, store);
 	}
 
-	// Action: File > Preferences...
 	private Runnable createPreferencesAction(JFrame frame) {
-		return () -> PreferencesDialog.show(frame, preferencesStore);
+		return () -> preferencesDialog.show(frame);
 	}
 
-	// Action: File > Exit
 	private Runnable createExitAction(JFrame frame) {
 		return () -> frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 	}
 
-	// Action: Help > About
 	private Runnable createAboutAction(JFrame frame) {
-		return () -> AboutDialog.show(frame);
+		return () -> aboutDialog.show(frame);
 	}
 }

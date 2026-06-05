@@ -259,6 +259,8 @@ logging:
 
 Rolling file details are also in `logback-spring.xml` (`TimeBasedRollingPolicy`, daily archives).
 
+**Localization** — UI strings use Spring `MessageSource` (`messages.properties`, `messages_es.properties`). Language is chosen in **Preferences** (system default, English, Spanish) and stored as `localeTag` in `preferences.json`. Changing language refreshes the menu, panels, and store-derived labels via `UiLocaleCoordinator`.
+
 ## Why Spring Boot for a Swing app?
 
 - **Constructor injection** for services, store, and panels

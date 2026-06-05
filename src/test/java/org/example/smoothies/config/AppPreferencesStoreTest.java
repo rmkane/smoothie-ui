@@ -32,7 +32,7 @@ class AppPreferencesStoreTest {
 		ObjectMapper mapper = JsonMappers.createJson();
 		AppPreferencesStore store = AppPreferencesStore.forTesting(preferencesFile, mapper);
 
-		store.save(new AppPreferences(UiTheme.DARK, false, List.of("milk"), null, "/tmp", 1.25f));
+		store.save(new AppPreferences(UiTheme.DARK, false, List.of("milk"), null, "/tmp", 1.25f, null));
 
 		AppPreferencesStore reloaded = AppPreferencesStore.forTesting(preferencesFile, mapper);
 		assertThat(reloaded.get().theme()).isEqualTo(UiTheme.DARK);
