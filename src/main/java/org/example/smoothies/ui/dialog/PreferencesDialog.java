@@ -1,43 +1,58 @@
 package org.example.smoothies.ui.dialog;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.*;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
 
 import org.example.smoothies.config.AppPreferences;
 import org.example.smoothies.config.AppPreferencesStore;
 import org.example.smoothies.config.UiTheme;
+import org.example.smoothies.i18n.AppLocales;
+import org.example.smoothies.i18n.UiLocaleCoordinator;
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.ui.desktop.DesktopFiles;
 import org.example.smoothies.ui.theme.LookAndFeelSupport;
 
-@UtilityClass
+@Component
+@RequiredArgsConstructor
 public class PreferencesDialog {
 
 	private static final int CONTENT_WIDTH = 400;
 
-	public static void show(JFrame parent, AppPreferencesStore preferencesStore) {
-		AppPreferences current = preferencesStore.get();
-		Form form = buildForm(parent, current, preferencesStore);
+	private final AppPreferencesStore preferencesStore;
+	private final DesktopFiles desktopFiles;
+	private final UiMessages messages;
+	private final ObjectProvider<UiLocaleCoordinator> localeCoordinator;
 
-		JDialog dialog = new JDialog(parent, "Preferences", true);
+	public void show(JFrame parent) {
+		AppPreferences current = preferencesStore.get();
+		Form form = buildForm(parent, current);
+
+		JDialog dialog = new JDialog(parent, messages.get("prefs.title"), true);
 		dialog.setLayout(new BorderLayout(0, 12));
 		dialog.add(form.panel, BorderLayout.CENTER);
-		dialog.add(createButtonBar(dialog, current, preferencesStore, form), BorderLayout.SOUTH);
+		dialog.add(createButtonBar(dialog, parent, current, form), BorderLayout.SOUTH);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
 		dialog.setVisible(true);
 	}
 
-	private static Form buildForm(JFrame parent, AppPreferences current, AppPreferencesStore preferencesStore) {
-		JRadioButton systemTheme = new JRadioButton("System", current.theme() == UiTheme.SYSTEM);
-		JRadioButton lightTheme = new JRadioButton("Light", current.theme() == UiTheme.LIGHT);
-		JRadioButton darkTheme = new JRadioButton("Dark", current.theme() == UiTheme.DARK);
+	private Form buildForm(JFrame parent, AppPreferences current) {
+		JRadioButton systemTheme = new JRadioButton(messages.get("prefs.theme.system"),
+				current.theme() == UiTheme.SYSTEM);
+		JRadioButton lightTheme = new JRadioButton(messages.get("prefs.theme.light"), current.theme() == UiTheme.LIGHT);
+		JRadioButton darkTheme = new JRadioButton(messages.get("prefs.theme.dark"), current.theme() == UiTheme.DARK);
 
 		ButtonGroup themeGroup = new ButtonGroup();
 		themeGroup.add(systemTheme);
@@ -46,13 +61,13 @@ public class PreferencesDialog {
 
 		JPanel themePanel = new JPanel();
 		themePanel.setLayout(new BoxLayout(themePanel, BoxLayout.Y_AXIS));
-		themePanel.setBorder(BorderFactory.createTitledBorder("Theme"));
+		themePanel.setBorder(BorderFactory.createTitledBorder(messages.get("prefs.theme")));
 		themePanel.add(systemTheme);
 		themePanel.add(lightTheme);
 		themePanel.add(darkTheme);
 		fitBoxWidth(themePanel);
 
-		JCheckBox restoreSelection = new JCheckBox("Restore last ingredient selection on startup",
+		JCheckBox restoreSelection = new JCheckBox(messages.get("prefs.restoreSelection"),
 				current.restoreLastSelection());
 		fitBoxWidth(restoreSelection);
 
@@ -62,25 +77,35 @@ public class PreferencesDialog {
 
 		JPanel appearancePanel = new JPanel();
 		appearancePanel.setLayout(new BoxLayout(appearancePanel, BoxLayout.Y_AXIS));
-		appearancePanel.setBorder(BorderFactory.createTitledBorder("Appearance"));
-		JLabel scaleLabel = new JLabel("UI scale:");
+		appearancePanel.setBorder(BorderFactory.createTitledBorder(messages.get("prefs.appearance")));
+		JLabel scaleLabel = new JLabel(messages.get("prefs.scale"));
 		fitBoxWidth(scaleLabel);
 		appearancePanel.add(scaleLabel);
 		appearancePanel.add(scaleChoices);
 		fitBoxWidth(appearancePanel);
 
-		JLabel configPath = new JLabel("<html>Settings are stored in:<br><code>%s</code></html>"
-				.formatted(preferencesStore.configDirectory()));
+		LocaleChoice[] localeChoices = localeChoices();
+		JComboBox<LocaleChoice> languageChoices = new JComboBox<>(localeChoices);
+		languageChoices.setSelectedItem(selectedLocaleChoice(localeChoices, current.localeTag()));
+		fitBoxWidth(languageChoices);
+
+		JPanel languagePanel = new JPanel();
+		languagePanel.setLayout(new BoxLayout(languagePanel, BoxLayout.Y_AXIS));
+		languagePanel.setBorder(BorderFactory.createTitledBorder(messages.get("prefs.language")));
+		languagePanel.add(languageChoices);
+		fitBoxWidth(languagePanel);
+
+		JLabel configPath = new JLabel(messages.get("prefs.storage.path", preferencesStore.configDirectory()));
 		fitBoxWidthWrapping(configPath);
 
-		JButton openSettingsFolder = new JButton("Open in file explorer");
+		JButton openSettingsFolder = new JButton(messages.get("prefs.openFolder"));
 		openSettingsFolder
-				.addActionListener(e -> DesktopFiles.openInFileManager(parent, preferencesStore.configDirectory()));
+				.addActionListener(e -> desktopFiles.openInFileManager(parent, preferencesStore.configDirectory()));
 		fitBoxWidth(openSettingsFolder);
 
 		JPanel storagePanel = new JPanel();
 		storagePanel.setLayout(new BoxLayout(storagePanel, BoxLayout.Y_AXIS));
-		storagePanel.setBorder(BorderFactory.createTitledBorder("Settings location"));
+		storagePanel.setBorder(BorderFactory.createTitledBorder(messages.get("prefs.storage")));
 		storagePanel.add(configPath);
 		storagePanel.add(Box.createVerticalStrut(6));
 		storagePanel.add(openSettingsFolder);
@@ -93,21 +118,22 @@ public class PreferencesDialog {
 		panel.add(Box.createVerticalStrut(8));
 		panel.add(appearancePanel);
 		panel.add(Box.createVerticalStrut(8));
+		panel.add(languagePanel);
+		panel.add(Box.createVerticalStrut(8));
 		panel.add(restoreSelection);
 		panel.add(Box.createVerticalStrut(8));
 		panel.add(storagePanel);
 		fitBoxWidth(panel);
 
-		return new Form(panel, systemTheme, lightTheme, darkTheme, restoreSelection, scaleChoices);
+		return new Form(panel, systemTheme, lightTheme, darkTheme, restoreSelection, scaleChoices, languageChoices);
 	}
 
-	private static JPanel createButtonBar(JDialog dialog, AppPreferences current, AppPreferencesStore preferencesStore,
-			Form form) {
-		JButton okButton = new JButton("OK");
-		JButton cancelButton = new JButton("Cancel");
+	private JPanel createButtonBar(JDialog dialog, JFrame parent, AppPreferences current, Form form) {
+		JButton okButton = new JButton(messages.get("button.ok"));
+		JButton cancelButton = new JButton(messages.get("button.cancel"));
 
 		okButton.addActionListener(e -> {
-			applyChanges(current, preferencesStore, form);
+			applyChanges(parent, current, form);
 			dialog.dispose();
 		});
 		cancelButton.addActionListener(e -> dialog.dispose());
@@ -124,39 +150,64 @@ public class PreferencesDialog {
 		return buttons;
 	}
 
-	private static void applyChanges(AppPreferences current, AppPreferencesStore preferencesStore, Form form) {
+	private void applyChanges(JFrame parent, AppPreferences current, Form form) {
 		UiTheme selectedTheme = selectedTheme(form.systemTheme, form.lightTheme, form.darkTheme);
 		float selectedScale = AppPreferences.UI_SCALE_OPTIONS.get(form.scaleChoices.getSelectedIndex());
+		String selectedLocaleTag = form.languageChoices.getItemAt(form.languageChoices.getSelectedIndex()).tag();
+
 		AppPreferences updated = current.withDialogSettings(selectedTheme, form.restoreSelection.isSelected(),
-				selectedScale);
+				selectedScale, selectedLocaleTag);
 
 		if (updated.equals(current)) {
 			return;
 		}
 
 		preferencesStore.save(updated);
-		boolean themeOrScaleChanged = updated.theme() != current.theme() || updated.uiScale() != current.uiScale();
-		if (!themeOrScaleChanged) {
-			return;
+
+		boolean localeChanged = !Objects.equals(updated.localeTag(), current.localeTag());
+		if (localeChanged) {
+			localeCoordinator.getObject().refresh(parent);
 		}
-		LookAndFeelSupport.apply(updated.theme(), updated.uiScale());
-		LookAndFeelSupport.refreshAllWindows();
+
+		boolean themeOrScaleChanged = updated.theme() != current.theme() || updated.uiScale() != current.uiScale();
+		if (themeOrScaleChanged) {
+			LookAndFeelSupport.apply(updated.theme(), updated.uiScale());
+			LookAndFeelSupport.refreshAllWindows();
+		}
 	}
 
 	private static void fitBoxWidth(JComponent component) {
-		component.setAlignmentX(Component.LEFT_ALIGNMENT);
+		component.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
 		int height = component.getPreferredSize().height;
 		component.setMaximumSize(new Dimension(CONTENT_WIDTH, height > 0 ? height : Integer.MAX_VALUE));
 	}
 
 	private static void fitBoxWidthWrapping(JComponent component) {
-		component.setAlignmentX(Component.LEFT_ALIGNMENT);
+		component.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
 		component.setMaximumSize(new Dimension(CONTENT_WIDTH, Integer.MAX_VALUE));
 	}
 
-	private static String[] scaleLabels() {
-		return AppPreferences.UI_SCALE_OPTIONS.stream().map(scale -> "%d%%".formatted(Math.round(scale * 100)))
-				.toArray(String[]::new);
+	private String[] scaleLabels() {
+		return AppPreferences.UI_SCALE_OPTIONS.stream()
+				.map(scale -> messages.get("prefs.scale.percent", Math.round(scale * 100))).toArray(String[]::new);
+	}
+
+	private LocaleChoice[] localeChoices() {
+		Map<String, String> choices = new LinkedHashMap<>();
+		choices.put(null, messages.get("prefs.locale.system"));
+		choices.put(AppLocales.ENGLISH_TAG, messages.get("prefs.locale.en"));
+		choices.put(AppLocales.SPANISH_TAG, messages.get("prefs.locale.es"));
+		return choices.entrySet().stream().map(e -> new LocaleChoice(e.getKey(), e.getValue()))
+				.toArray(LocaleChoice[]::new);
+	}
+
+	private static LocaleChoice selectedLocaleChoice(LocaleChoice[] choices, String localeTag) {
+		for (LocaleChoice choice : choices) {
+			if (Objects.equals(choice.tag(), localeTag)) {
+				return choice;
+			}
+		}
+		return choices[0];
 	}
 
 	private static int indexForScale(float uiScale) {
@@ -174,7 +225,14 @@ public class PreferencesDialog {
 		return UiTheme.SYSTEM;
 	}
 
+	private record LocaleChoice(String tag, String label) {
+		@Override
+		public String toString() {
+			return label;
+		}
+	}
+
 	private record Form(JPanel panel, JRadioButton systemTheme, JRadioButton lightTheme, JRadioButton darkTheme,
-			JCheckBox restoreSelection, JComboBox<String> scaleChoices) {
+			JCheckBox restoreSelection, JComboBox<String> scaleChoices, JComboBox<LocaleChoice> languageChoices) {
 	}
 }

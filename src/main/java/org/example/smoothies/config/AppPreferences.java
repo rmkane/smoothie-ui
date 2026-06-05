@@ -8,9 +8,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record AppPreferences(UiTheme theme, boolean restoreLastSelection, List<String> lastSelectedIngredients,
-		WindowBounds windowBounds, String lastFileChooserDirectory, float uiScale) {
+		WindowBounds windowBounds, String lastFileChooserDirectory, float uiScale, String localeTag) {
 
-	public static final AppPreferences DEFAULTS = new AppPreferences(UiTheme.SYSTEM, true, List.of(), null, null, 1.0f);
+	public static final AppPreferences DEFAULTS = new AppPreferences(UiTheme.SYSTEM, true, List.of(), null, null, 1.0f,
+			null);
 
 	public static final List<Float> UI_SCALE_OPTIONS = List.of(1.0f, 1.25f, 1.5f);
 
@@ -24,6 +25,9 @@ public record AppPreferences(UiTheme theme, boolean restoreLastSelection, List<S
 		if (uiScale <= 0) {
 			uiScale = 1.0f;
 		}
+		if (localeTag != null && localeTag.isBlank()) {
+			localeTag = null;
+		}
 		lastSelectedIngredients = List.copyOf(lastSelectedIngredients);
 	}
 
@@ -34,7 +38,7 @@ public record AppPreferences(UiTheme theme, boolean restoreLastSelection, List<S
 			@JsonProperty("lastSelectedIngredients") List<String> lastSelectedIngredients,
 			@JsonProperty("windowBounds") WindowBounds windowBounds,
 			@JsonProperty("lastFileChooserDirectory") String lastFileChooserDirectory,
-			@JsonProperty("uiScale") Float uiScale) {
+			@JsonProperty("uiScale") Float uiScale, @JsonProperty("localeTag") String localeTag) {
 		UiTheme resolvedTheme = theme;
 		if (resolvedTheme == null) {
 			resolvedTheme = Boolean.FALSE.equals(useSystemLookAndFeel) ? UiTheme.LIGHT : UiTheme.SYSTEM;
@@ -42,21 +46,23 @@ public record AppPreferences(UiTheme theme, boolean restoreLastSelection, List<S
 		boolean restore = restoreLastSelection != null ? restoreLastSelection : true;
 		float scale = uiScale != null && uiScale > 0 ? uiScale : 1.0f;
 		return new AppPreferences(resolvedTheme, restore, lastSelectedIngredients, windowBounds,
-				lastFileChooserDirectory, scale);
+				lastFileChooserDirectory, scale, localeTag);
 	}
 
-	public AppPreferences withDialogSettings(UiTheme theme, boolean restoreLastSelection, float uiScale) {
+	public AppPreferences withDialogSettings(UiTheme theme, boolean restoreLastSelection, float uiScale,
+			String localeTag) {
 		return new AppPreferences(theme, restoreLastSelection, lastSelectedIngredients, windowBounds,
-				lastFileChooserDirectory, uiScale);
+				lastFileChooserDirectory, uiScale, localeTag);
 	}
 
 	public AppPreferences withSession(Set<String> selected, WindowBounds windowBounds) {
 		List<String> sorted = selected.stream().sorted().collect(Collectors.toList());
-		return new AppPreferences(theme, restoreLastSelection, sorted, windowBounds, lastFileChooserDirectory, uiScale);
+		return new AppPreferences(theme, restoreLastSelection, sorted, windowBounds, lastFileChooserDirectory, uiScale,
+				localeTag);
 	}
 
 	public AppPreferences withLastFileChooserDirectory(String directory) {
 		return new AppPreferences(theme, restoreLastSelection, lastSelectedIngredients, windowBounds, directory,
-				uiScale);
+				uiScale, localeTag);
 	}
 }

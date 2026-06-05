@@ -6,17 +6,28 @@ import javax.swing.*;
 
 import org.springframework.stereotype.Component;
 
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.ui.message.AppMessage;
 import org.example.smoothies.ui.store.AppStore;
 
 @Component
 public class ActionsPanel extends JPanel {
 
-	public ActionsPanel(AppStore store) {
+	private final AppStore store;
+	private final UiMessages messages;
+	private final JButton logReportButton;
+
+	public ActionsPanel(AppStore store, UiMessages messages) {
+		this.store = store;
+		this.messages = messages;
 		setLayout(new BorderLayout());
 
-		JButton logReportButton = new JButton("Log full report");
+		logReportButton = new JButton(messages.get("actions.logReport"));
 		logReportButton.addActionListener(e -> store.dispatch(new AppMessage.LogReportRequested()));
 		add(logReportButton, BorderLayout.EAST);
+	}
+
+	public void applyLocale() {
+		logReportButton.setText(messages.get("actions.logReport"));
 	}
 }
