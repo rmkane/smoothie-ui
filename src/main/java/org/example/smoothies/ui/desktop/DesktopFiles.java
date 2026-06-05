@@ -1,6 +1,5 @@
 package org.example.smoothies.ui.desktop;
 
-import java.awt.Component;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,16 +7,21 @@ import java.nio.file.Path;
 
 import javax.swing.JOptionPane;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
-import org.example.smoothies.ui.support.AppInfo;
+import lombok.RequiredArgsConstructor;
 
-@UtilityClass
+import org.example.smoothies.i18n.UiMessages;
+
+@Component
+@RequiredArgsConstructor
 public class DesktopFiles {
 
-	public static void openInFileManager(Component parent, Path directory) {
+	private final UiMessages messages;
+
+	public void openInFileManager(java.awt.Component parent, Path directory) {
 		if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-			showError(parent, "Opening folders is not supported on this system.");
+			showError(parent, messages.get("desktop.open.unsupported"));
 			return;
 		}
 
@@ -25,11 +29,11 @@ public class DesktopFiles {
 			Files.createDirectories(directory);
 			Desktop.getDesktop().open(directory.toFile());
 		} catch (IOException | UnsupportedOperationException e) {
-			showError(parent, "Could not open settings folder:\n%s".formatted(directory));
+			showError(parent, messages.get("desktop.open.error", directory));
 		}
 	}
 
-	private static void showError(Component parent, String message) {
-		JOptionPane.showMessageDialog(parent, message, AppInfo.NAME, JOptionPane.ERROR_MESSAGE);
+	private void showError(java.awt.Component parent, String message) {
+		JOptionPane.showMessageDialog(parent, message, messages.get("app.name"), JOptionPane.ERROR_MESSAGE);
 	}
 }

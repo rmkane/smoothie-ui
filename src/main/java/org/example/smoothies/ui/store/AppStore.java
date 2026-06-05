@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.repository.SmoothieRepository;
 import org.example.smoothies.service.SmoothieService;
@@ -23,14 +24,16 @@ import org.example.smoothies.util.CountLabels;
 public class AppStore {
 
 	private final SmoothieService smoothieService;
+	private final UiMessages messages;
 	private final List<Smoothie> recipes;
 	private final List<String> allIngredients;
 	private final List<StateListener> listeners = new CopyOnWriteArrayList<>();
 
 	private AppState state;
 
-	public AppStore(SmoothieService smoothieService, SmoothieRepository repository) {
+	public AppStore(SmoothieService smoothieService, SmoothieRepository repository, UiMessages messages) {
 		this.smoothieService = smoothieService;
+		this.messages = messages;
 		this.recipes = repository.getSmoothies();
 		this.allIngredients = smoothieService.getAllIngredients(recipes);
 		this.state = buildState(Set.of());
@@ -52,6 +55,8 @@ public class AppStore {
 			applyState(buildState(Set.copyOf(allIngredients)));
 		} else if (message instanceof AppMessage.ClearAllIngredients) {
 			applyState(buildState(Set.of()));
+		} else if (message instanceof AppMessage.LocaleChanged) {
+			applyState(buildState(state.selectedIngredients()));
 		} else if (message instanceof AppMessage.LogReportRequested) {
 			log.info("Report requested for ingredients {}:\n{}", state.selectedIngredients(),
 					smoothieService.formatMakeableReport(recipes, state.selectedIngredients()));
@@ -74,12 +79,14 @@ public class AppStore {
 	private AppState buildState(Set<String> selected) {
 		List<Smoothie> makeable = smoothieService.findMakeable(recipes, selected);
 		List<String> resultLines = makeable.isEmpty()
-				? List.of(AppState.EMPTY_RESULTS_MESSAGE)
+				? List.of(messages.get("results.empty"))
 				: makeable.stream().map(smoothieService::formatListEntry).toList();
 
 		int count = makeable.size();
-		String countLabel = "%s available".formatted(CountLabels.format(count, "smoothie", "smoothies"));
-		String selectedSummary = "Selected: %s".formatted(formatSelectedSummary(selected));
+		String countPart = CountLabels.format(count, messages.get("results.count.noun.singular"),
+				messages.get("results.count.noun.plural"));
+		String countLabel = messages.get("results.count.available", countPart);
+		String selectedSummary = messages.get("ingredients.selected", formatSelectedSummary(selected));
 
 		log.debug("State updated - selected: {}, makeable: {}", selected, count);
 
@@ -88,7 +95,7 @@ public class AppStore {
 
 	private String formatSelectedSummary(Set<String> selected) {
 		if (selected.isEmpty()) {
-			return "(none)";
+			return messages.get("ingredients.selected.none");
 		}
 		return selected.stream().sorted().collect(Collectors.joining(", "));
 	}

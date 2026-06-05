@@ -4,28 +4,31 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.ui.support.AppIcons;
 import org.example.smoothies.ui.support.AppInfo;
 
-@UtilityClass
+@Component
+@RequiredArgsConstructor
 public class AboutDialog {
 
-	public static void show(Window parent) {
-		String html = """
-				<html><body style='width: 300px; font-family: sans-serif;'>
-				<p style='font-size: 14px;'><b>%s</b></p>
-				<p>Version %s</p>
-				<p>%s</p>
-				</body></html>
-				""".formatted(AppInfo.NAME, AppInfo.version(), AppInfo.DESCRIPTION);
+	private final UiMessages messages;
+
+	public void show(Window parent) {
+		String appName = messages.get("app.name");
+		String html = messages.get("about.body", appName, messages.get("app.version", AppInfo.version()),
+				messages.get("app.description"));
 
 		JLabel message = new JLabel(html);
 		message.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 		Icon icon = AppIcons.dialogIcon();
 
-		JOptionPane.showMessageDialog(parent, message, "About " + AppInfo.NAME, JOptionPane.INFORMATION_MESSAGE, icon);
+		JOptionPane.showMessageDialog(parent, message, messages.get("about.title", appName),
+				JOptionPane.INFORMATION_MESSAGE, icon);
 	}
 }

@@ -13,6 +13,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.example.smoothies.config.JsonMappers;
+import org.example.smoothies.i18n.TestI18n;
+import org.example.smoothies.i18n.UiMessages;
 import org.example.smoothies.io.YamlLoader;
 import org.example.smoothies.model.Smoothie;
 import org.example.smoothies.model.SmoothiesWrapper;
@@ -20,29 +22,30 @@ import org.example.smoothies.repository.SmoothieRepository;
 import org.example.smoothies.service.SmoothieService;
 import org.example.smoothies.service.impl.SmoothieServiceImpl;
 import org.example.smoothies.ui.message.AppMessage;
-import org.example.smoothies.ui.state.AppState;
 
 class AppStoreTest {
 
 	private AppStore store;
+	private UiMessages messages;
 	private List<Smoothie> recipes;
 
 	@BeforeEach
 	void setUp() {
-		SmoothieService service = new SmoothieServiceImpl();
+		messages = TestI18n.englishMessages();
+		SmoothieService service = new SmoothieServiceImpl(messages);
 		SmoothiesWrapper wrapper = new YamlLoader(new DefaultResourceLoader(), JsonMappers.createYaml())
 				.load("data/smoothies.yml", SmoothiesWrapper.class);
 		recipes = wrapper.smoothies();
 		SmoothieRepository repository = () -> recipes;
-		store = new AppStore(service, repository);
+		store = new AppStore(service, repository, messages);
 	}
 
 	@Test
 	void initialStateHasNoSelection() {
-		AppState state = store.getState();
+		var state = store.getState();
 
 		assertThat(state.selectedIngredients()).isEmpty();
-		assertThat(state.resultLines()).containsExactly(AppState.EMPTY_RESULTS_MESSAGE);
+		assertThat(state.resultLines()).containsExactly(messages.get("results.empty"));
 		assertThat(state.countLabel()).isEqualTo("0 smoothies available");
 	}
 
@@ -50,7 +53,7 @@ class AppStoreTest {
 	void dispatchUpdatesMakeableSmoothies() {
 		store.dispatch(new AppMessage.IngredientsSelectionChanged(Set.of("nectar", "milk")));
 
-		AppState state = store.getState();
+		var state = store.getState();
 		assertThat(state.selectedIngredients()).containsExactlyInAnyOrder("nectar", "milk");
 		assertThat(state.resultLines()).isNotEmpty();
 		assertThat(state.resultLines()).anyMatch(line -> line.contains("Nectar") || line.contains("Milk"));
@@ -68,7 +71,7 @@ class AppStoreTest {
 
 	@Test
 	void subscribeReceivesUpdatedState() throws Exception {
-		AtomicReference<AppState> latest = new AtomicReference<>();
+		AtomicReference<org.example.smoothies.ui.state.AppState> latest = new AtomicReference<>();
 		store.subscribe(latest::set);
 
 		store.dispatch(new AppMessage.IngredientsSelectionChanged(Set.of("mango")));
