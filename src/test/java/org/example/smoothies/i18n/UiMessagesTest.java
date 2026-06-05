@@ -16,7 +16,7 @@ class UiMessagesTest {
 	@BeforeEach
 	void setUp() {
 		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-		source.setBasename("messages");
+		source.setBasename("i18n/messages");
 		source.setDefaultEncoding("UTF-8");
 		localeHolder = new LocaleHolder();
 		messages = new UiMessages(source, localeHolder);
